@@ -1,2 +1,9 @@
 ---
-# tasks file for ansible_role_linux
+
+- include_tasks: context.yml
+
+- block:
+
+    - include_tasks: specific_hardware.yml
+
+  when: ansible_system == 'Linux'

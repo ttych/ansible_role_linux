@@ -1,0 +1,9 @@
+---
+
+- name: get lspci output
+  command:
+    cmd: lspci
+  register: t_lscpi
+  changed_when: no
+
+- include_tasks: broadcom_bcmw.yml

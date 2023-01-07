@@ -1,0 +1,10 @@
+---
+
+- block:
+    - name: install broadcom bcm drivers
+      package:
+        name: "{{ linux_broadcom_bcmw }}"
+        state: present
+
+  when:
+    - '"Network controller: Broadcom Inc. and subsidiaries BCM43" in t_lscpi.stdout'
