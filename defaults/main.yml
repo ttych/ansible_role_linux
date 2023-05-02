@@ -2,6 +2,7 @@
 
 ### want
 want_i386_architecture: no
+want_developer: no
 
 ###
 root_group: root
@@ -64,7 +65,6 @@ sys_packages:
     - wget
     - zip
     - zsh
-  x86_64:
     - aspell-en
     - aspell-fr
     - p7zip
@@ -89,8 +89,6 @@ sys_packages:
       - knockd
       - ksh
       - lame
-      - libreadline-dev
-      - libsqlite3-dev
       - libtcmalloc-minimal4
       - lm-sensors
       - ncal
@@ -108,8 +106,33 @@ sys_packages:
     x86_64:
       - zfsnap
       - zfsutils-linux
-    server: []
-    desktop:
+  server:
+    common:
+      - emacs-nox
+      - dhcpcd-common
+      - dhcping
+      - dhcpd-pools
+      - dhcpdump
+      - isc-dhcp-server
+      - vim-nox
+  desktop:
+    common:
+      - emacs
+      - filezilla
+      - gcompris-qt
+      - gimp
+      - gthumb
+      - mplayer
+      - putty
+      - rxvt-unicode
+      - vim
+      - xbindkeys
+      - xclip
+      - xterm
+      - firefox
+      - vlc
+      - wine
+      - winetricks
       - gimp-help-fr
       - firefox-locale-fr
       - chromium-browser
@@ -129,30 +152,12 @@ sys_packages:
       - wine32
       - xbindkeys-config
       - xsel
-  server:
-    - emacs-nox
-    - dhcpcd-common
-    - dhcping
-    - dhcpd-pools
-    - dhcpdump
-    - isc-dhcp-server
-    - vim-nox
-  desktop:
-    - emacs
-    - filezilla
-    - gcompris-qt
-    - gimp
-    - gthumb
-    - mplayer
-    - putty
-    - rxvt-unicode
-    - vim
-    - xbindkeys
-    - xclip
-    - xterm
-    - firefox
-    - vlc
-    - wine
-    - winetricks
+  developer:
+    common: []
+    Ubuntu:
+      - libreadline-dev
+      - libsqlite3-dev
+      - libssl-dev
+      - libyaml-dev
 sys_packages_extra: []
 sys_packages_cache_ttl: 43200
