@@ -1,2 +1,158 @@
 ---
 
+### want
+want_i386_architecture: no
+
+###
+root_group: root
+
+### sys files
+sysctl_conf: /etc/sysctl.conf
+
+### directories
+sys_directories:
+  - { dest: '/usr/local', mode: '0755', owner: 'root', group: "{{ root_group }}", state: 'directory' }
+  - { dest: '/usr/local/bin', mode: '0755', owner: 'root', group: "{{ root_group }}", state: 'directory' }
+  - { dest: '/usr/local/etc', mode: '0755', owner: 'root', group: "{{ root_group }}", state: 'directory' }
+  - { dest: '/usr/local/include', mode: '0755', owner: 'root', group: "{{ root_group }}", state: 'directory' }
+  - { dest: '/usr/local/lib', mode: '0755', owner: 'root', group: "{{ root_group }}", state: 'directory' }
+  - { dest: '/usr/local/sbin', mode: '0755', owner: 'root', group: "{{ root_group }}", state: 'directory' }
+  - { dest: '/usr/local/share', mode: '0755', owner: 'root', group: "{{ root_group }}", state: 'directory' }
+  #
+  - { dest: '/usr/local/games', mode: '0755', owner: 'root', group: "{{ root_group }}", state: 'directory' }
+  - { dest: '/usr/local/share/man', mode: '0755', owner: 'root', group: "{{ root_group }}", state: 'directory' }
+  - { dest: '/usr/local/src', mode: '0755', owner: 'root', group: "{{ root_group }}", state: 'directory' }
+sys_links:
+  - { dest: '/usr/local/man', src: '/usr/local/share/man', mode: '0755', owner: 'root', group: "{{ root_group }}", state: 'link' }
+sys_extra_directories: []
+sys_extra_links: []
+
+### packages
+sys_packages:
+  common:
+    - apg
+    - arping
+    - aspell
+    - bash
+    - curl
+    - dmidecode
+    - dvdbackup
+    - expect
+    - ffmpeg
+    - flac
+    - gdisk
+    - git
+    - htop
+    - iat
+    - inotify-tools
+    - iperf
+    - iperf3
+    - latex2html
+    - lftp
+    - logrotate
+    - makepasswd
+    - mercurial
+    - nmap
+    - rsync
+    - ruby
+    - screen
+    - sshpass
+    - streamripper
+    - sudo
+    - tmux
+    - unzip
+    - wget
+    - zip
+    - zsh
+  x86_64:
+    - aspell-en
+    - aspell-fr
+    - p7zip
+    - powertop
+    - rar
+    - unrar
+    - whois
+    - x86info
+  Ubuntu:
+    common:
+      - abcde
+      - ansible
+      - aptitude
+      - apt-file
+      - autofs
+      - capistrano
+      - daemontools
+      - eyed3
+      - gcc
+      - g++
+      - gpart
+      - knockd
+      - ksh
+      - lame
+      - libreadline-dev
+      - libsqlite3-dev
+      - libtcmalloc-minimal4
+      - lm-sensors
+      - ncal
+      - net-tools
+      - nfs-common
+      - nfs-kernel-server
+      - openssh-server
+      - python3
+      - samba
+      - software-properties-common
+      - sshfs
+      - strace
+      - tightvncserver
+      - ubuntu-standard
+    x86_64:
+      - zfsnap
+      - zfsutils-linux
+    server: []
+    desktop:
+      - gimp-help-fr
+      - firefox-locale-fr
+      - chromium-browser
+      - chromium-browser-l10n
+      - gparted
+      - handbrake
+      - handbrake-cli
+      - hunspell-fr
+      - hyphen-fr
+      - libreoffice
+      - libreoffice-help-fr
+      - libreoffice-l10n-fr
+      - mythes-fr
+      - steam
+      # - steamcmd
+      - virtualbox
+      - wine32
+      - xbindkeys-config
+      - xsel
+  server:
+    - emacs-nox
+    - dhcpcd-common
+    - dhcping
+    - dhcpd-pools
+    - dhcpdump
+    - isc-dhcp-server
+    - vim-nox
+  desktop:
+    - emacs
+    - filezilla
+    - gcompris-qt
+    - gimp
+    - gthumb
+    - mplayer
+    - putty
+    - rxvt-unicode
+    - vim
+    - xbindkeys
+    - xclip
+    - xterm
+    - firefox
+    - vlc
+    - wine
+    - winetricks
+sys_packages_extra: []
+sys_packages_cache_ttl: 43200

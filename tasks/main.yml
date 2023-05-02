@@ -4,6 +4,12 @@
 
 - block:
 
+    - include_tasks: sys_directories.yml
+
+    - include_tasks: pkg_repositories.yml
+
+    - include_tasks: packages.yml
+
     - include_tasks: specific_hardware.yml
 
   when: ansible_system == 'Linux'

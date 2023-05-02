@@ -1,0 +1,24 @@
+---
+
+- name: create base system directories
+  file:
+    path: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    state: "{{ item.state }}"
+  with_flattened:
+    - "{{ sys_directories }}"
+    - "{{ sys_extra_directories }}"
+
+- name: create base system links
+  file:
+    path: "{{ item.dest }}"
+    src: "{{ item.src }}"
+    mode: "{{ item.mode }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    state: "{{ item.state }}"
+  with_flattened:
+    - "{{ sys_links }}"
+    - "{{ sys_extra_links }}"

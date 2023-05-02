@@ -1,0 +1,36 @@
+---
+
+- block:
+    - name: compute package list
+      set_fact:
+        sys_computed_packages: "{{ \
+                 (sys_packages['common'] | d([])) \
+                 + (sys_packages[ansible_architecture] | d([]))
+                 + (sys_packages[hosttype] | d([])) \
+                 + (sys_packages[ansible_distribution]['common'] | d([])) \
+                 + (sys_packages[ansible_distribution][ansible_architecture] | d([])) \
+                 + (sys_packages[ansible_distribution][hosttype] | d([])) \
+                 + (sys_packages[ansible_distribution][ansible_distribution_version]['common'] | d([])) \
+                 + (sys_packages[ansible_distribution][ansible_distribution_version][ansible_architecture] | d([])) \
+                 + (sys_packages[ansible_distribution][ansible_distribution_version][hosttype] | d([])) \
+                 + (sys_packages_extra | d([])) \
+              }}"
+
+    - block:
+        - name: apt based update
+          apt:
+            upgrade: "yes"
+            update_cache: yes
+            cache_valid_time: "{{ sys_packages_cache_ttl }}"
+
+        - name: "apt install {{ hosttype }} packages"
+          apt:
+            name: "{{ sys_computed_packages }}"
+            state: latest
+            update_cache: yes
+            cache_valid_time: "{{ sys_packages_cache_ttl }}"
+            autoremove: yes
+
+      when: ansible_pkg_mgr == 'apt'
+
+  when: ansible_system == 'Linux'
