@@ -5,7 +5,7 @@
       set_fact:
         sys_computed_developer_packages: "{{ \
                  (sys_packages['developer']['common'] | d([])) \
-                 + (sys_packages['developer'][ansible_architecture] | d([]))
+                 + (sys_packages['developer'][ansible_distribution] | d([]))
               }}"
 
     - block:

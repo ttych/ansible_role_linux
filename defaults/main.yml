@@ -49,7 +49,6 @@ sys_packages:
     - iperf
     - iperf3
     - latex2html
-    - libusb
     - lftp
     - logrotate
     - makepasswd
