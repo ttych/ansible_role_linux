@@ -157,6 +157,8 @@ sys_packages:
     common: []
     Ubuntu:
       - autoconf
+      - clang
+      - llvm
       - libreadline-dev
       - libsqlite3-dev
       - libssl-dev
