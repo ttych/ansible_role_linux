@@ -49,6 +49,7 @@ sys_packages:
     - iperf
     - iperf3
     - latex2html
+    - libusb
     - lftp
     - logrotate
     - makepasswd
@@ -155,9 +156,11 @@ sys_packages:
   developer:
     common: []
     Ubuntu:
+      - autoconf
       - libreadline-dev
       - libsqlite3-dev
       - libssl-dev
       - libyaml-dev
+      - libusb-dev
 sys_packages_extra: []
 sys_packages_cache_ttl: 43200
