@@ -157,6 +157,7 @@ sys_packages:
     Ubuntu:
       - autoconf
       - clang
+      - libclang-cpp-dev
       - llvm
       - libreadline-dev
       - libsqlite3-dev
