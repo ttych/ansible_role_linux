@@ -39,6 +39,7 @@ sys_packages:
     - dmidecode
     - dvdbackup
     - expect
+    - faac
     - ffmpeg
     - flac
     - gdisk
@@ -54,6 +55,7 @@ sys_packages:
     - makepasswd
     - mercurial
     - nmap
+    - opus-tools
     - rsync
     - ruby
     - screen
