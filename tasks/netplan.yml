@@ -1,0 +1,45 @@
+---
+
+- name: set netplan directory permission
+  file:
+    path: "{{ sys_netplan_d }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: use static netplan configuration
+  set_fact:
+    network_netplan_template_src: netplan/static_netplan.yml
+    network_netplan_template_dest: "{{ sys_netplan_d }}/01-netcfg.yaml"
+  when: sys_network_mode == 'static'
+
+- name: use NetworkManager netplan configuration
+  set_fact:
+    network_netplan_template_src: netplan/network_manager_netplan.yml
+    network_netplan_template_dest: "{{ sys_netplan_d }}/01-network-manager-all.yaml"
+  when: sys_network_mode == 'desktop'
+
+- name: use dynamic netplan configuration
+  set_fact:
+    network_netplan_template_src: netplan/dynamic_netplan.yml
+    network_netplan_template_dest: "{{ sys_netplan_d }}/01-netcfg.yaml"
+  when: sys_network_mode == 'dynamic'
+
+- name: install netplan
+  template:
+    src: "{{ network_netplan_template_src }}"
+    dest: "{{ network_netplan_template_dest }}"
+    owner: root
+    group: root
+    mode: 0644
+  register: netplan_install
+
+- block:
+    - name: generate netplan
+      shell: netplan generate
+
+    - name: apply netplan
+      shell: netplan apply
+
+  when: netplan_install.changed

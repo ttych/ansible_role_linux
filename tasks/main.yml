@@ -12,4 +12,6 @@
 
     - include_tasks: specific_hardware.yml
 
+    - include_tasks: network.yml
+
   when: ansible_system == 'Linux'
