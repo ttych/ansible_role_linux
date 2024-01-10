@@ -12,6 +12,4 @@
 
     - include_tasks: specific_hardware.yml
 
-    - include_tasks: developer.yml
-
   when: ansible_system == 'Linux'

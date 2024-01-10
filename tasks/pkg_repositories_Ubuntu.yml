@@ -17,7 +17,7 @@
                 update_cache: yes
           when: dpkg_foreign_architectures.stdout is not match('i386')
 
-      when: ansible_architecture in ['x86_64', "amd64"] and want_i386_architecture
+      when: ansible_architecture in ['x86_64', "amd64"] and want_sys_i386_architecture
 
     - apt_repository:
         repo: "{{ item }}"

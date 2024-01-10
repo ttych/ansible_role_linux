@@ -1,8 +1,9 @@
 ---
 
 ### want
-want_i386_architecture: no
-want_developer: no
+want_sys_i386_architecture: no
+want_sys_developer: no
+want_sys_extra: yes
 
 ###
 root_group: root
@@ -29,117 +30,108 @@ sys_extra_directories: []
 sys_extra_links: []
 
 ### packages
+sys_packages_cache_ttl: 43200
+
 sys_packages:
   common:
-    - apg
-    - arping
-    - aspell
-    - bash
-    - curl
-    - dmidecode
-    - dvdbackup
-    - expect
-    - faac
-    - ffmpeg
-    - flac
-    - gdisk
-    - git
-    - htop
-    - iat
-    - inotify-tools
-    - iperf
-    - iperf3
-    - latex2html
-    - lftp
-    - logrotate
-    - makepasswd
-    - mercurial
-    - nmap
-    - opus-tools
-    - rsync
-    - ruby
-    - screen
-    - sshpass
-    - streamripper
-    - sudo
-    - tmux
-    - unzip
-    - wget
-    - zip
-    - zsh
-    - aspell-en
-    - aspell-fr
-    - p7zip
-    - powertop
-    - rar
-    - unrar
-    - whois
-    - x86info
-  Ubuntu:
-    common:
-      - abcde
+    base:
       - ansible
-      - aptitude
-      - apt-file
+      - apg
+      - arping
+      - aspell
+      - aspell-en
+      - aspell-fr
       - autofs
-      - capistrano
+      - bash
+      - curl
       - daemontools
-      - eyed3
-      - gcc
-      - g++
+      - dmidecode
+      - expect
+      - ffmpeg
+      - gdisk
+      - git
       - gpart
+      - htop
+      - inotify-tools
       - knockd
       - ksh
-      - lame
+      - lftp
       - libtcmalloc-minimal4
       - lm-sensors
+      - logrotate
+      - make
+      - makepasswd
+      - mercurial
       - ncal
       - net-tools
       - nfs-common
       - nfs-kernel-server
+      - nmap
       - openssh-server
+      - p7zip
+      - powertop
       - python3
+      - rake
+      - rar
+      - rsync
+      - ruby
       - samba
-      - software-properties-common
+      - screen
       - sshfs
+      - sshpass
       - strace
-      - tightvncserver
-      - ubuntu-standard
-    x86_64:
+      - sudo
+      - tmux
+      - unrar
+      - unzip
+      - wget
+      - whois
+      - x86info
       - zfsnap
       - zfsutils-linux
+      - zip
+      - zsh
+    Ubuntu:
+      - aptitude
+      - apt-file
+      - software-properties-common
+      - ubuntu-standard
+  extra:
+    base:
+      - abcde
+      - dvdbackup
+      - eyed3
+      - faac
+      - flac
+      - iat
+      - iperf
+      - iperf3
+      - lame
+      - latex2html
+      - opus-tools
+      - streamripper
+      - tightvncserver
+    Ubuntu: []
   server:
-    common:
-      - emacs-nox
-      - dhcpcd-common
-      - dhcping
-      - dhcpd-pools
+    base:
       - dhcpdump
-      - isc-dhcp-server
+      - dhcping
+      - emacs-nox
       - vim-nox
+    Ubuntu: []
   desktop:
-    common:
-      - emacs
-      - filezilla
-      - gcompris-qt
-      - gimp
-      - gthumb
-      - mplayer
-      - putty
-      - rxvt-unicode
-      - vim
-      - xbindkeys
-      - xclip
-      - xterm
-      - firefox
-      - vlc
-      - wine
-      - winetricks
-      - gimp-help-fr
-      - firefox-locale-fr
+    base:
       - chromium-browser
       - chromium-browser-l10n
+      - emacs
+      - filezilla
+      - firefox
+      - firefox-locale-fr
+      - gcompris-qt
+      - gimp
+      - gimp-help-fr
       - gparted
+      - gthumb
       - handbrake
       - handbrake-cli
       - hunspell-fr
@@ -147,24 +139,35 @@ sys_packages:
       - libreoffice
       - libreoffice-help-fr
       - libreoffice-l10n-fr
+      - mplayer
       - mythes-fr
+      - putty
+      - rxvt-unicode
       - steam
       # - steamcmd
+      - vim
       - virtualbox
+      - vlc
+      - wine
       - wine32
+      - winetricks
+      - xbindkeys
       - xbindkeys-config
+      - xclip
       - xsel
+      - xterm
+    Ubuntu: []
   developer:
-    common: []
-    Ubuntu:
+    base:
       - autoconf
       - clang
+      - gcc
       - libclang-cpp-dev
-      - llvm
       - libreadline-dev
       - libsqlite3-dev
       - libssl-dev
-      - libyaml-dev
       - libusb-dev
-sys_packages_extra: []
-sys_packages_cache_ttl: 43200
+      - libyaml-dev
+      - llvm
+    Ubuntu:
+      - g++

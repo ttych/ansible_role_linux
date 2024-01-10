@@ -1,18 +1,40 @@
 ---
 
-- name: compute package list
+- name: compute base package list
   set_fact:
     sys_computed_packages: "{{ \
-             (sys_packages['common'] | d([])) \
-             + (sys_packages[ansible_distribution]['common'] | d([])) \
-             + (sys_packages[ansible_distribution][ansible_architecture] | d([])) \
-             + (sys_packages[ansible_distribution][hosttype] | d([])) \
-             + (sys_packages[ansible_distribution][ansible_distribution_version] | d([])) \
-             + (sys_packages[hosttype]['common'] | d([])) \
-             + (sys_packages[hosttype][ansible_architecture] | d([])) \
-             + (sys_packages[hosttype][ansible_distribution] | d([])) \
-             + (sys_packages_extra | d([])) \
-          }}"
+      (sys_packages['common']['base'] | d([])) \
+      + (sys_packages['common'][ansible_distribution] | d([])) \
+      + (sys_packages['common'][ansible_distribution + '_' + ansible_distribution_version] | d([])) \
+      + (sys_packages['common'][ansible_distribution + '_' + ansible_architecture] | d([])) \
+      + (sys_packages[hosttype]['base'] | d([])) \
+      + (sys_packages[hosttype][ansible_distribution] | d([])) \
+      + (sys_packages[hosttype][ansible_distribution + '_' + ansible_distribution_version] | d([])) \
+      + (sys_packages[hosttype][ansible_distribution + '_' + ansible_architecture] | d([])) \
+    }}"
+
+- name: add extra pack to package list
+  set_fact:
+    sys_computed_packages: "{{ \
+      sys_computed_packages  \
+      + (sys_packages['extra']['base'] | d([])) \
+      + (sys_packages['extra'][ansible_distribution] | d([])) \
+      + (sys_packages['extra'][ansible_distribution + '_' + ansible_distribution_version] | d([])) \
+      + (sys_packages['extra'][ansible_distribution + '_' + ansible_architecture] | d([])) \
+    }}"
+  when: want_sys_extra
+
+- name: add developer pack to package list
+  set_fact:
+    sys_computed_packages: "{{ \
+      sys_computed_packages  \
+      + (sys_packages['developer']['base'] | d([])) \
+      + (sys_packages['developer'][ansible_distribution] | d([])) \
+      + (sys_packages['developer'][ansible_distribution + '_' + ansible_distribution_version] | d([])) \
+      + (sys_packages['developer'][ansible_distribution + '_' + ansible_architecture] | d([])) \
+    }}"
+  when: want_sys_developer
+
 
 - block:
     - name: apt based update
