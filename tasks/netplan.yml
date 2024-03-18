@@ -18,7 +18,7 @@
   set_fact:
     network_netplan_template_src: netplan/network_manager_netplan.yml
     network_netplan_template_dest: "{{ sys_netplan_d }}/01-network-manager-all.yaml"
-  when: sys_network_mode == 'desktop'
+  when: sys_network_mode == 'workstation'
 
 - name: use dynamic netplan configuration
   set_fact:

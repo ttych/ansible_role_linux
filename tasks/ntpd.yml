@@ -1,0 +1,33 @@
+---
+
+- name: install ntpd packages
+  package:
+    name: '{{ sys_ntpd_packages }}'
+    state: 'present'
+  register: sys_ntpd_install
+
+
+- name: set ntpd servers
+  lineinfile:
+    path: "{{ sys_ntpd_conf_file }}"
+    regexp: "^pool {{ item.pool }} "
+    line: "pool {{ item.pool }} {{ item.options }}"
+  loop: "{{ sys_ntpd_servers }}"
+  register: t_sys_ntpd_conf
+
+# - name: set keys file content
+#   # FIXME
+#   register: chrony_keys_status
+
+- name: enable ntpd service
+  service:
+    name: "{{ sys_ntpd_service }}"
+    enabled: yes
+    state: started
+  register: t_sys_ntpd_service
+
+- name: restart service
+  service:
+    name: "{{ sys_ntpd_service }}"
+    state: restarted
+  when: t_sys_ntpd_conf.changed and not t_sys_ntpd_service.changed

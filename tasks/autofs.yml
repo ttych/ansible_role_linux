@@ -1,0 +1,47 @@
+---
+
+- block:
+
+    - name: install autofs packages
+      package:
+        name: "{{ sys_autofs_packages }}"
+        state: present
+      register: t_sys_autofs_install
+
+    - name: add references in auto.master
+      lineinfile:
+        path: /etc/auto.master
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      with_items:
+        - regexp: '^/home/nfs\s'
+          line: '/home/nfs /etc/auto.home'
+        - regexp: '^/net\s'
+          line: '/net /etc/auto.net'
+      register: t_sys_autofs_master
+
+    - name: install auto.home
+      copy:
+        owner: root
+        group: root
+        mode: 0644
+        src: autofs/auto.home
+        dest: /etc/auto.home
+      register: t_sys_autofs_home
+
+    - name: enable autofs service
+      service:
+        name: autofs
+        enabled: yes
+        state: started
+      register: t_sys_autofs_start
+
+    - name: restart service
+      service:
+        name: autofs
+        state: restarted
+      when:
+        - t_sys_autofs_master.changed or t_sys_autofs_home.changed
+        - not t_sys_autofs_start.changed
+
+  when: want_sys_autofs

@@ -1,0 +1,58 @@
+---
+
+- name: install logrotate packages
+  package:
+    name: "{{ sys_logrotate_packages }}"
+    state: present
+  register: t_sys_logrotate_install
+
+- name: set logrotate.d directory
+  file:
+    path: "{{ sys_logrotate_d }}"
+    owner: root
+    group: "{{ root_group }}"
+    mode: "0755"
+    state: directory
+
+- block:
+    - name: check logrotate.conf
+      stat:
+        path: "{{ sys_logrotate_conf }}"
+      register: t_sys_logrotate_conf
+
+    - name: check logrotate.conf.sample
+      stat:
+        path: "{{ sys_logrotate_conf }}.sample"
+      register: t_sys_logrotate_conf_sample
+
+    - name: deploy logrotate.conf
+      template:
+        src: "logrotate/logrotate.conf"
+        dest: "{{ sys_logrotate_conf }}"
+        mode : "0644"
+        owner: root
+        group: "{{ root_group }}"
+      when: not t_sys_logrotate_conf.stat.exists or (t_sys_logrotate_conf_sample.stat.exists and t_sys_logrotate_conf_sample.stat.checksum == t_sys_logrotate_conf.stat.checksum)
+
+- name: set logrotate.conf options
+  lineinfile:
+    path: "{{ sys_logrotate_conf }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop: "{{ sys_logrotate_conf_entries }}"
+
+- name: set cron.daily dir
+  file:
+    path: "{{ sys_cron_daily_dir }}"
+    owner: root
+    group: "{{ root_group }}"
+    mode: "0755"
+    state: directory
+
+- name: deploy cron.daily logrotate task
+  template:
+    src: "logrotate/cron.daily/logrotate"
+    dest: "{{ sys_cron_daily_dir }}/logrotate"
+    mode : "0644"
+    owner: root
+    group: "{{ root_group }}"

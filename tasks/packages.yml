@@ -7,10 +7,10 @@
       + (sys_packages['common'][ansible_distribution] | d([])) \
       + (sys_packages['common'][ansible_distribution + '_' + ansible_distribution_version] | d([])) \
       + (sys_packages['common'][ansible_distribution + '_' + ansible_architecture] | d([])) \
-      + (sys_packages[hosttype]['base'] | d([])) \
-      + (sys_packages[hosttype][ansible_distribution] | d([])) \
-      + (sys_packages[hosttype][ansible_distribution + '_' + ansible_distribution_version] | d([])) \
-      + (sys_packages[hosttype][ansible_distribution + '_' + ansible_architecture] | d([])) \
+      + (sys_packages[host_type]['base'] | d([])) \
+      + (sys_packages[host_type][ansible_distribution] | d([])) \
+      + (sys_packages[host_type][ansible_distribution + '_' + ansible_distribution_version] | d([])) \
+      + (sys_packages[host_type][ansible_distribution + '_' + ansible_architecture] | d([])) \
     }}"
 
 - name: add extra pack to package list

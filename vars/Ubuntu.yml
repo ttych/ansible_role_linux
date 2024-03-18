@@ -1,3 +1,5 @@
 ---
 
 linux_broadcom_bcmw: bcmwl-kernel-source
+
+sys_sshd_service: ssh

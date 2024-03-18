@@ -1,0 +1,45 @@
+---
+
+- block:
+    - name: get current default
+      shell: "systemctl get-default"
+      register: t_sys_systemd_default
+      changed_when: no
+
+    - name: default should be graphical.target
+      set_fact:
+        sys_systemd_default: graphical.target
+      when:
+        - host_type == 'workstation'
+        - sys_systemd_default is not defined
+
+    - name: default should be multi-user.target
+      set_fact:
+        sys_systemd_default: multi-user.target
+      when:
+        - host_type == 'server' or host_type == 'router'
+        - sys_systemd_default is not defined
+
+    - name: set default
+      shell: "systemctl set-default {{ sys_systemd_default }}"
+      when:
+        - sys_systemd_default is defined
+        - t_sys_systemd_default.stdout != sys_systemd_default
+
+
+    - name: ensure journald settings
+      lineinfile:
+        path: "{{ sys_journald_conf }}"
+        regexp: "^{{ item.setting }}="
+        line: "{{ item.setting }}={{ item.value }}"
+        insertafter: "[Journal]"
+      loop: "{{ sys_journald_settings }}"
+      register: t_sys_journald_conf_change
+
+    - name: reload journald
+      service:
+        name: "{{ sys_journald_service }}"
+        state: restarted
+      when: t_sys_journald_conf_change.changed
+
+  when: ansible_service_mgr == 'systemd'

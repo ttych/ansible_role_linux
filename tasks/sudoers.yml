@@ -1,0 +1,11 @@
+---
+
+- copy:
+    src: 'sudoers.d/{{ item }}'
+    dest: '{{ sys_sudoers_d }}/{{ item }}'
+    owner: root
+    group: "{{ root_group }}"
+    mode: 0440
+    validate: 'sh -c "cat {{ sys_sudoers }} %s | visudo -cf-"'
+  loop:
+    - admin

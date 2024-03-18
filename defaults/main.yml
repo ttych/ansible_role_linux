@@ -1,11 +1,16 @@
 ---
 
+### to define
+host_type:
+
 ### want
 want_sys_i386_architecture: no
 want_sys_developer: no
 want_sys_extra: yes
 want_sys_ipv6: no
 want_sys_ipv4: yes
+want_sys_security: no
+want_sys_autofs: yes
 
 ###
 root_group: root
@@ -121,7 +126,7 @@ sys_packages:
       - emacs-nox
       - vim-nox
     Ubuntu: []
-  desktop:
+  workstation:
     base:
       - chromium-browser
       - chromium-browser-l10n
@@ -163,6 +168,7 @@ sys_packages:
     base:
       - autoconf
       - clang
+      - cmake
       - gcc
       - libclang-cpp-dev
       - libreadline-dev
@@ -192,3 +198,148 @@ sys_domain_nameservers:
     # - 2606:4700:4700::1111  # cloudflare
     - 2606:4700:4700::1001  # cloudflare
     - 2620:fe::fe           # quad9
+
+sys_hostid_file: /etc/hostid
+
+sys_ubuntu_release_upgrades_conf: /etc/update-manager/release-upgrades
+sys_ubuntu_release_upgrades_mode: normal
+
+sys_sysctl_conf: /etc/sysctl.conf
+sys_sysctls: []
+
+sys_groups_base:
+  - { name: admin, gid: 2001 }
+  - { name: service, gid: 2101 }
+  - { name: logger, gid: 2102 }
+  - { name: share, gid: 2103 }
+sys_groups:
+  - { name: lusers, gid: 3002 }
+  - { name: rusers, gid: 3003 }
+
+sys_users_base:
+  - name: admin
+    comment: admin
+    group: admin
+    groups: "{{ root_group }},service"
+    shell: /bin/sh
+    uid: 2001
+    home_mode: '0700'
+    password: '*'
+    authorized_keys:
+      - "{{ admin_ssh_pub_key | default(None) }}"
+
+  - name: service
+    comment: service
+    group: service
+    groups:
+    home: /nonexistent
+    create_home: no
+    shell: /usr/sbin/nologin
+    uid: 2101
+    home_mode: '0700'
+    password: '*'
+
+  - name: logger
+    comment: logger
+    group: logger
+    groups:
+    home: /nonexistent
+    create_home: no
+    shell: /usr/sbin/nologin
+    uid: 2102
+    home_mode: '0700'
+    password: '*'
+sys_users:
+  - name: thomas
+    comment: Thomas
+    group: lusers
+    groups: plugdev,netdev,cdrom
+    shell: /bin/sh
+    uid: 3010
+    home_mode: '0711'
+    authorized_keys:
+      - "{{ thomas_ssh_pub_key | default(None) }}"
+
+sys_zfs_try: true
+sys_zfs_dataset_properties:
+  setuid: off
+  compression: "lz4"
+  sharenfs: off
+  sharesmb: off
+  atime: off
+  relatime: off
+
+sys_sudoers: /etc/sudoers
+sys_sudoers_d: /etc/sudoers.d
+
+sys_journald_service: systemd-journald.service
+sys_journald_conf: /etc/systemd/journald.conf
+sys_journald_SystemMaxUse:
+  server: 3G
+  default: 1G
+sys_journald_Compress: yes
+sys_journald_settings:
+  - { setting: "SystemMaxUse", value: "{{ sys_journald_SystemMaxUse[host_type] | d(sys_journald_SystemMaxUse['default']) }}" }
+  - { setting: "Compress", value: "{{ 'yes' if sys_journald_Compress else 'no' }}" }
+
+sys_fstabs: []
+
+sys_sshd_service: sshd
+sys_sshd_conf_file: /etc/ssh/sshd_config
+sys_sshd_conf_entries_base:
+  - { regexp: '^PermitRootLogin ', line: 'PermitRootLogin no' }
+  - { regexp: '^PermitEmptyPasswords ', line: 'PermitEmptyPasswords no' }
+sys_sshd_conf_entries_secure:
+  - { regexp: '^ChallengeResponseAuthentication ', line: 'ChallengeResponseAuthentication no'}
+  - { regexp: '^PasswordAuthentication ', line: 'PasswordAuthentication no' }
+  # - { regexp: '^UsePAM ', line: 'UsePAM no' }
+
+sys_ntpd_packages:
+  - chrony
+sys_ntpd_conf_file: /etc/chrony/chrony.conf
+sys_ntpd_key_file: /etc/chrony/chrony.keys
+sys_ntpd_service: chrony
+sys_ntpd_servers:
+  - { pool: ntp.ubuntu.com, options: iburst maxsources 4}
+  - { pool: 0.ubuntu.pool.ntp.org, options: iburst maxsources 1}
+  - { pool: 1.ubuntu.pool.ntp.org, options: iburst maxsources 1}
+  - { pool: 2.ubuntu.pool.ntp.org, options: iburst maxsources 2}
+  - { pool: 0.debian.pool.ntp.org, options: iburst maxsources 1}
+  - { pool: 1.debian.pool.ntp.org, options: iburst maxsources 1}
+  - { pool: 2.debian.pool.ntp.org, options: iburst maxsources 2}
+
+sys_logrotate_packages:
+  - logrotate
+sys_logrotate_conf: /etc/logrotate.conf
+sys_logrotate_d: /etc/logrotate.d
+sys_logrotate_user: root
+sys_logrotate_group: adm
+sys_logrotate_bin_path: /usr/sbin/logrotate
+sys_logrotate_conf_entries:
+  - { regexp: "^weekly", line: "weekly" }
+  - { regexp: "^su ", line: "su {{ sys_logrotate_user }} {{ sys_logrotate_group }}" }
+  - { regexp: "^rotate ", line: "rotate 4" }
+  - { regexp: "^create", line: "create" }
+  - { regexp: "^compress", line: "compress" }
+  - { regexp: "^include {{ sys_logrotate_d }}", line: "include {{ sys_logrotate_d }}" }
+
+sys_cron_daily_dir: /etc/cron.daily
+
+sys_grub_display: console
+sys_grub_timeout: 5
+sys_grub_recordfail_timeout: 5
+sys_grub_configuration_path: /etc/default/grub
+sys_grub_timeout_style: menu
+sys_grub_conf_common:
+  - { key: "GRUB_TIMEOUT", value: "{{ sys_grub_timeout }}" }
+  - { key: "GRUB_RECORDFAIL_TIMEOUT", value: "{{ sys_grub_recordfail_timeout }}" }
+  - { key: "GRUB_TIMEOUT_STYLE", value: "{{ sys_grub_timeout_style }}" }
+sys_grub_conf_console:
+  - { key: "GRUB_CMDLINE_LINUX_DEFAULT", value: "\"\"" }
+  - { key: "GRUB_TERMINAL", value: "console" }
+sys_grub_conf_graphic:
+  - { key: "GRUB_CMDLINE_LINUX_DEFAULT", value: "\"quiet splash\"" }
+  - { key: "GRUB_TERMINAL", value: "", state: absent }
+
+sys_autofs_packages:
+  - autofs

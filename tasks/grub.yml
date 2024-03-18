@@ -1,0 +1,41 @@
+---
+
+- name: Gather package facts
+  package_facts:
+    manager: auto
+
+- block:
+    - name: set common grub settings
+      lineinfile:
+        path: "{{ sys_grub_configuration_path }}"
+        regexp: "^{{ item.key }}="
+        line: "{{ item.key }}={{ item.value }}"
+        state: "{{ item.state | d(omit) }}"
+      loop: "{{ sys_grub_conf_common }}"
+      register: t_sys_grub_conf_common
+
+    - name: set console grub settings
+      lineinfile:
+        path: "{{ sys_grub_configuration_path }}"
+        regexp: "^{{ item.key }}="
+        line: "{{ item.key }}={{ item.value }}"
+        state: "{{ item.state | d(omit) }}"
+      loop: "{{ sys_grub_conf_console }}"
+      register: t_sys_grub_conf_console
+      when: sys_grub_display == 'console'
+
+    - name: set graphic grub settings
+      lineinfile:
+        path: "{{ sys_grub_configuration_path }}"
+        regexp: "^{{ item.key }}="
+        line: "{{ item.key }}={{ item.value }}"
+        state: "{{ item.state | d(omit) }}"
+      loop: "{{ sys_grub_conf_graphic }}"
+      register: t_sys_grub_conf_graphic
+      when: sys_grub_display == 'graphic'
+
+    - name: update-grub
+      shell: update-grub
+      when: t_sys_grub_conf_common.changed or t_sys_grub_conf_console.changed or t_sys_grub_conf_graphic.changed
+
+  when: "'grub-common' in ansible_facts.packages or 'grub2-common' in ansible_facts.packages"

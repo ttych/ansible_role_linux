@@ -1,0 +1,6 @@
+---
+
+- include_tasks: user.yml
+  loop: "{{ sys_users_base + sys_users }}"
+  loop_control:
+    loop_var: user

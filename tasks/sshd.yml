@@ -1,0 +1,43 @@
+---
+
+- name: set sshd base config
+  lineinfile:
+    path: "{{ sys_sshd_conf_file }}"
+    regexp: "{{ sys_sshd_conf_entry.regexp }}"
+    line: "{{ sys_sshd_conf_entry.line }}"
+  loop: "{{ sys_sshd_conf_entries_base }}"
+  loop_control:
+    loop_var: sys_sshd_conf_entry
+  register: t_sys_sshd_conf_base
+
+- name: set sshd secure conf
+  lineinfile:
+    path: "{{ sys_sshd_conf_file }}"
+    regexp: "{{ sys_sshd_conf_entry.regexp }}"
+    line: "{{ sys_sshd_conf_entry.line }}"
+  loop: "{{ sys_sshd_conf_entries_secure }}"
+  loop_control:
+    loop_var: sys_sshd_conf_entry
+  register: t_sys_sshd_conf_secure
+  when: want_sys_security
+
+
+- name: enable service on Linux
+  service:
+    name: "{{ sys_sshd_service }}"
+    enabled: yes
+  when: ansible_system == 'Linux'
+
+- name: start service
+  service:
+    name: "{{ sys_sshd_service }}"
+    state: started
+  register: t_sshd_service
+
+- name: restart service if updated
+  service:
+    name: "{{ sys_sshd_service }}"
+    state: restarted
+  when:
+    - (t_sys_sshd_conf_base.changed or t_sys_sshd_conf_secure.changed)
+    - not t_sys_sshd_service.changed
