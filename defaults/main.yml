@@ -209,6 +209,7 @@ sys_sysctls: []
 
 sys_groups_base:
   - { name: admin, gid: 2001 }
+  - { name: ops, gid: 2002 }
   - { name: service, gid: 2101 }
   - { name: logger, gid: 2102 }
   - { name: share, gid: 2103 }
@@ -253,7 +254,7 @@ sys_users:
   - name: thomas
     comment: Thomas
     group: lusers
-    groups: plugdev,netdev,cdrom
+    groups: plugdev,netdev,cdrom,ops
     shell: /bin/sh
     uid: 3010
     home_mode: '0711'
@@ -269,8 +270,12 @@ sys_zfs_dataset_properties:
   atime: off
   relatime: off
 
-sys_sudoers: /etc/sudoers
+sys_sudoers_conf: /etc/sudoers
 sys_sudoers_d: /etc/sudoers.d
+sys_sudoers:
+  - admin
+  - ops
+
 
 sys_journald_service: systemd-journald.service
 sys_journald_conf: /etc/systemd/journald.conf

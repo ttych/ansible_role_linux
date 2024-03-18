@@ -1,11 +1,11 @@
 ---
 
-- copy:
+- name: deploy sudoers
+  template:
     src: 'sudoers.d/{{ item }}'
     dest: '{{ sys_sudoers_d }}/{{ item }}'
     owner: root
     group: "{{ root_group }}"
     mode: 0440
-    validate: 'sh -c "cat {{ sys_sudoers }} %s | visudo -cf-"'
-  loop:
-    - admin
+    validate: 'sh -c "cat {{ sys_sudoers_conf }} %s | visudo -cf-"'
+  loop: "{{ sys_sudoers }}"
