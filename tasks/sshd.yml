@@ -32,7 +32,7 @@
   service:
     name: "{{ sys_sshd_service }}"
     state: started
-  register: t_sshd_service
+  register: t_sys_sshd_service
 
 - name: restart service if updated
   service:
