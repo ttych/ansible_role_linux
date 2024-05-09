@@ -32,7 +32,7 @@
     dest: "{{ network_netplan_template_dest }}"
     owner: root
     group: root
-    mode: 0644
+    mode: 0600
   register: netplan_install
 
 - block:

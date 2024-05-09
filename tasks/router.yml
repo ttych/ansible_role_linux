@@ -1,0 +1,19 @@
+---
+
+- name: sysctl for ivp4 routing
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ ((is_router | d(false)) and ansible_default_ipv4) | ternary(item.value_on, item.value_off) }}"
+    state: present
+    sysctl_file: "{{ sysctl_conf }}"
+    sysctl_set: yes
+  loop: "{{ sys_router_sysctl_ipv4 }}"
+
+- name: sysctl for ipv6 routing
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ ((is_router | d(false)) and ansible_default_ipv6) | ternary(item.value_on, item.value_off) }}"
+    state: present
+    sysctl_file: "{{ sysctl_conf }}"
+    sysctl_set: yes
+  loop: "{{ sys_router_sysctl_ipv6 }}"

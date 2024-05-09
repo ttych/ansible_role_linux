@@ -3,27 +3,47 @@ network:
   version: 2
   renderer: networkd
   ethernets:
-{% if want_sys_ipv4 and ansible_default_ipv4 and ansible_default_ipv4.interface %}
-    {{ ansible_default_ipv4.interface }}:
+{% for interface in (ansible_interfaces | sort) %}
+{%   set interface_facts = vars["ansible_" + interface] %}
+{%   if interface_facts.active and interface_facts.type == 'ether' and interface != 'lo' %}
+    {{ interface }}:
       addresses:
-        - {{ (ansible_default_ipv4.address + '/' + ansible_default_ipv4.netmask) | ipsubnet }}
-      gateway4: {{ ansible_default_ipv4.gateway }}
+{%     if want_sys_ipv4 %}
+{%     if interface_facts.ipv4.__class__.__name__ == 'list' %}
+{%       set interface_ipv4s = interface_facts.ipv4 %}
+{%     elif interface_facts.ipv4.__class__.__name__ == 'dict' %}
+{%       set interface_ipv4s = [interface_facts.ipv4] %}
+{%     endif %}
+{%     for ipv4 in interface_ipv4s %}
+        - {{ ipv4.address }}/{{ ipv4.prefix }}
+{%     endfor %}
+{%     endif %}
+{%     if want_sys_ipv6 %}
+{%     if interface_facts.ipv6.__class__.__name__ == 'list' %}
+{%       set interface_ipv6s = interface_facts.ipv6 %}
+{%     elif interface_facts.ipv6.__class__.__name__ == 'dict' %}
+{%       set interface_ipv6s = [interface_facts.ipv6] %}
+{%     endif %}
+{%     for ipv6 in interface_ipv6s %}
+{%       if ipv6.scope != 'global' and ipv6.scope != 'link' %}
+        - {{ ipv6.address }}/{{ ipv6.prefix }}
+{%       endif %}
+{%     endfor %}
+{%     endif %}
+      routes:
+{%     if want_sys_ipv4 and ansible_default_ipv4.gateway %}
+        - to: default
+          via: {{ ansible_default_ipv4.gateway }}
+{%     endif %}
+{%     if want_sys_ipv6 and ansible_default_ipv6.gateway %}
+        - to: "::/0"
+          via: "{{ ansible_default_ipv6.gateway }}"
+          on-link: true
+{%     endif %}
       nameservers:
-          search: {{ sys_domain_search }}
-          addresses: {{ sys_domain_nameservers.ipv6 }}
-#          options: {{ ansible_dns.options }}
+        addresses: {{ sys_domain_nameservers.ipv4 + sys_domain_nameservers.ipv6 }}
+        search: {{ sys_domain_search }}
       dhcp4: no
       dhcp6: no
-{% endif %}
-{% if want_sys_ipv6 and ansible_default_ipv6 and ansible_default_ipv6.interface %}
-    {{ ansible_default_ipv6.interface }}:
-      addresses:
-        - {{ (ansible_default_ipv6.address + '/' + ansible_default_ipv6.netmask) | ipsubnet }}
-      gateway4: {{ ansible_default_ipv6.gateway }}
-      nameservers:
-          search: {{ sys_domain_search }}
-          addresses: {{ sys_domain_nameservers.ipv6 }}
-#          options: {{ ansible_dns.options }}
-      dhcp4: no
-      dhcp6: no
-{% endif %}
+{%   endif %}
+{% endfor %}

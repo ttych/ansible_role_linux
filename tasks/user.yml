@@ -57,7 +57,7 @@
     path: "{{ user_home }}"
     owner: "{{ user.name }}"
     group: "{{ user.group }}"
-    mode: "{{ user.home_mode | default('0755') }}"
+    mode: "{{ user.home_mode | default('0700') }}"
     #recurse: yes
     #follow: no
   when:

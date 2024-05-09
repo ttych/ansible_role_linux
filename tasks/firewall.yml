@@ -1,0 +1,16 @@
+---
+
+- block:
+
+    - block:
+        - name: install iptables
+          package:
+            name: "{{ sys_iptables_packages }}"
+            state: present
+
+
+
+
+      when: sys_firewall == 'iptables'
+
+  when: (is_router | d(false)) or (is_server | d(false)) or want_sys_security

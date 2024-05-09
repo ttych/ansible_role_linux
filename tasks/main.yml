@@ -42,4 +42,8 @@
 
     - include_tasks: autofs.yml
 
+    - include_tasks: router.yml
+
+    - include_tasks: firewall.yml
+
   when: ansible_system == 'Linux'

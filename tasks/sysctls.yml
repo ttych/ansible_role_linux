@@ -1,5 +1,12 @@
 ---
 
+- name: compute sysctls
+  set_fact:
+    sys_sysctls_computed: "{{ (sys_sysctls_computed|d([])) + [item] }}"
+  loop: "{{ sys_sysctls + sys_sysctls_base }}"
+  when: item.name not in (sys_sysctls_computed|d([])) | map(attribute='name') | list
+
+
 - name: set sysctls
   sysctl:
     name: "{{ item.name }}"
@@ -7,4 +14,4 @@
     state: present
     reload: yes
     sysctl_file: "{{ sys_sysctl_conf }}"
-  loop: "{{ sys_sysctls }}"
+  loop: "{{ sys_sysctls_computed }}"
