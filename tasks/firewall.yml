@@ -2,15 +2,12 @@
 
 - block:
 
-    - block:
-        - name: install iptables
-          package:
-            name: "{{ sys_iptables_packages }}"
-            state: present
+    - include_tasks: nftables.yml
 
+    - include_tasks: iptables.yml
 
+    - include_tasks: firewalld.yml
 
-
-      when: sys_firewall == 'iptables'
+    - include_tasks: ufw.yml
 
   when: (is_router | d(false)) or (is_server | d(false)) or want_sys_security

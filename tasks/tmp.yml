@@ -1,0 +1,18 @@
+---
+
+- name: tmpfiles.d for tmp
+  template:
+    src: tmpfiles.d/tmp.conf
+    dest: "{{ sys_tmp_tmpfiles_d }}"
+    mode: '0644'
+    owner: root
+    group: root
+
+- name: mount tmp
+  mount:
+    src: "{{ item.src }}"
+    path: "{{ item.path }}"
+    opts: "{{ item.opts }}"
+    fstype: tmpfs
+    state: "{{ item.state | default('mounted') }}"
+  loop: "{{ sys_tmp_mounts }}"

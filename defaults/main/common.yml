@@ -1,0 +1,14 @@
+---
+
+root_group: root
+
+sysctl_conf: /etc/sysctl.conf
+
+sys_netplan_d: /etc/netplan
+
+sys_tmpfiles_d: /etc/tmpfiles.d
+
+sys_nftables_service: nftables
+sys_nftables_conf: /etc/nftables.conf
+sys_nftables_conf_mode: '0750'
+sys_nftables_d: /etc/nftables.d

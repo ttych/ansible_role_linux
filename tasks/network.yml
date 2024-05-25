@@ -2,9 +2,9 @@
 
 - name: set sys_network_mode
   block:
-    - name: set sys_network_mode to router
+    - name: set sys_network_mode to static
       set_fact:
-        sys_network_mode: router
+        sys_network_mode: static
       when: sys_network_mode is not defined and is_router is defined and is_router
 
     - name: set sys_network_mode to static
@@ -12,9 +12,9 @@
         sys_network_mode: static
       when: sys_network_mode is not defined and host_type == 'server'
 
-    - name: set sys_network_mode to workstation
+    - name: set sys_network_mode to network_manager
       set_fact:
-        sys_network_mode: workstation
+        sys_network_mode: network_manager
       when: sys_network_mode is not defined and host_type == 'workstation'
 
     - name: set sys_network_mode to network-manager

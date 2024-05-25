@@ -30,15 +30,18 @@ network:
 {%       endif %}
 {%     endfor %}
 {%     endif %}
+{%     if (want_sys_ipv4 and ansible_default_ipv4.gateway and ansible_default_ipv4.alias == interface) or (want_sys_ipv6 and ansible_default_ipv6.gateway and ansible_default_ipv6.alias == interface) %}
       routes:
-{%     if want_sys_ipv4 and ansible_default_ipv4.gateway %}
+{%       if want_sys_ipv4 and ansible_default_ipv4.gateway and ansible_default_ipv4.alias == interface %}
         - to: default
           via: {{ ansible_default_ipv4.gateway }}
-{%     endif %}
-{%     if want_sys_ipv6 and ansible_default_ipv6.gateway %}
+          on-link: true
+{%       endif %}
+{%       if want_sys_ipv6 and ansible_default_ipv6.gateway and ansible_default_ipv6.alias == interface %}
         - to: "::/0"
           via: "{{ ansible_default_ipv6.gateway }}"
           on-link: true
+{%       endif %}
 {%     endif %}
       nameservers:
         addresses: {{ sys_domain_nameservers.ipv4 + sys_domain_nameservers.ipv6 }}

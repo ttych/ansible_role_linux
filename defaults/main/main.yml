@@ -11,12 +11,7 @@ want_sys_ipv6: no
 want_sys_ipv4: yes
 want_sys_security: no
 want_sys_autofs: yes
-
-###
-root_group: root
-
-### sys files
-sysctl_conf: /etc/sysctl.conf
+want_sys_grub: yes
 
 ### directories
 sys_directories:
@@ -53,10 +48,12 @@ sys_packages:
       - curl
       - daemontools
       - dmidecode
+      - ethtool
       - expect
       - ffmpeg
       - gdisk
       - git
+      - gnupg
       - gpart
       - htop
       - inotify-tools
@@ -83,7 +80,6 @@ sys_packages:
       - rsync
       - ruby
       - samba
-      - screen
       - sshfs
       - sshpass
       - strace
@@ -99,10 +95,15 @@ sys_packages:
       - zip
       - zsh
     Ubuntu:
+      - apparmor
+      - apt
       - aptitude
       - apt-file
+      - snapd
       - software-properties-common
+      - ubuntu-minimal
       - ubuntu-standard
+      - update-notifier-common
   extra:
     base:
       - abcde
@@ -124,8 +125,14 @@ sys_packages:
       - dhcpdump
       - dhcping
       - emacs-nox
+      - iptables
+      - nftables
+      - screen
       - vim-nox
-    Ubuntu: []
+    Ubuntu:
+      - needrestart
+      # - ubuntu-server-minimal
+      # - ubuntu-server
   workstation:
     base:
       - chromium-browser
@@ -150,16 +157,16 @@ sys_packages:
       - mythes-fr
       - putty
       - rxvt-unicode
-      - steam
+      # - steam
       # - steamcmd
       - vim
       - virtualbox
       - vlc
       - wine
-      - wine32
+      # - wine32
       - winetricks
       - xbindkeys
-      - xbindkeys-config
+      # - xbindkeys-config
       - xclip
       - xsel
       - xterm
@@ -180,7 +187,6 @@ sys_packages:
     Ubuntu:
       - g++
 
-sys_netplan_d: /etc/netplan
 sys_domain_search:
   - local
 sys_domain_nameservers:
@@ -273,7 +279,6 @@ sys_users_base:
     group: share
     groups:
     home: /home/share
-    create_home: no
     shell: /bin/sh
     uid: 2103
     home_mode: '0700'
@@ -400,18 +405,74 @@ sys_grub_conf_graphic:
 sys_autofs_packages:
   - autofs
 
-sys_firewall: iptables
-
-sys_iptables_packages:
-  - iptables
-  - iptables-persistent
-
 sys_router_sysctl_ipv4:
   - name: net.ipv4.ip_forward
     value_on: 1
     value_off: 0
 
-sys_router_sysctl_ipv6: []
+sys_router_sysctl_ipv6:
+  - name: net.ipv6.conf.all.forwarding
+    value_on: 1
+    value_off: 0
 
-# sys_net_ext_interface
-# sys_net_int_interface
+sys_network_wan_interface: null
+sys_network_lan_interface: null
+sys_network_wlan_interface: null
+
+sys_firewall: nftables
+
+sys_firewall_wan_services:
+  - protocol: tcp
+    port: 22
+    service: ssh
+sys_firewall_lan_services:
+  - protocol: tcp
+    port: 22
+    service: ssh
+  - protocol: tcp
+    port: 53
+    service: domain
+  - protocol: udp
+    port: 53
+    service: domain
+  - protocol: udp
+    port: 67
+    service: bootps
+  - protocol: udp
+    port: 68
+    service: bootpc
+  - protocol: udp
+    port: 69
+    service: tftp
+
+sys_iptables_service: iptables
+sys_iptables_persistent_service: netfilter-persistent
+sys_iptables_packages:
+  - iptables
+  - iptables-persistent
+sys_iptables_rules_routing:
+  - chain: FORWARD
+    action: append
+    jump: ACCEPT
+  - chain: FORWARD
+    action: append
+    cstate:
+      - RELATED
+      - ESTABLISHED
+    jump: ACCEPT
+sys_iptables_rules_nating:
+  - table: nat
+    chain: POSTROUTING
+    action: append
+    jump: MASQUERADE
+
+sys_firewalld_service: firewalld
+
+sys_ufw_service: ufw
+
+sys_tmp_tmpfs_size: 1G
+sys_tmp_mounts:
+  - src: tmpfs
+    path: /tmp
+    opts: "defaults,noatime,mode=1777,nosuid,nodev,size={{ sys_tmp_tmpfs_size }}"
+sys_tmp_tmpfiles_d: "{{ sys_tmpfiles_d }}/tmp.conf"

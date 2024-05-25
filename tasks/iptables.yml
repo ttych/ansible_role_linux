@@ -1,0 +1,67 @@
+---
+
+- block:
+
+    - name: install iptables
+      package:
+        name: "{{ sys_iptables_packages }}"
+        state: present
+
+
+    - name: base rules
+      debug:
+        msg: "TO BE IMPLEMENTED"
+      register: t_sys_iptables_rules_base
+
+    - name: routing rules
+      iptables:
+        table: "{{ item.1.table | d(omit) }}"
+        chain: "{{ item.1.chain | d(omit) }}"
+        action: "{{ item.1.action | d(omit) }}"
+        jump: "{{ item.1.jump | d(omit) }}"
+        cstate: "{{ item.1.cstate | d(omit) }}"
+        in_interface: "{{ item.0.1 }}"
+        out_interface: "{{ item.0.0 }}"
+      loop: "{{ sys_network_ext_interfaces | product(sys_network_lan_interfaces) | product(sys_iptables_rules_routing) | list }}"
+      register: t_sys_iptables_rules_routing
+      when: is_router|d(false)
+
+    - name: nating rules
+      iptables:
+        table: "{{ item.1.table | d(omit) }}"
+        chain: "{{ item.1.chain | d(omit) }}"
+        action: "{{ item.1.action | d(omit) }}"
+        jump: "{{ item.1.jump | d(omit) }}"
+        cstate: "{{ item.1.cstate | d(omit) }}"
+        out_interface: "{{ item.0 }}"
+      loop: "{{ (sys_network_ext_interfaces + sys_network_lan_interfaces) | product(sys_iptables_rules_nating) | list }}"
+      register: t_sys_iptables_rules_nating
+      when: is_router|d(false)
+
+    - name: save rules
+      command:
+        cmd: netfilter-persistent save
+      when: (t_sys_iptables_rules_base is defined and t_sys_iptables_rules_base.changed) or (t_sys_iptables_rules_routing is defined and t_sys_iptables_rules_routing.changed) or (t_sys_iptables_rules_nating is defined and t_sys_iptables_rules_nating.changed)
+
+  when: sys_firewall == 'iptables'
+
+
+
+- name: service iptables
+  service:
+    name: "{{ sys_iptables_service }}"
+    enabled: "{{ sys_firewall == 'iptables' }}"
+    state: "{{ (sys_firewall == 'iptables') | ternary('started', 'stopped') }}"
+  ignore_errors: "{{ sys_firewall != 'iptables' }}"
+
+- name: iptables persistent service
+  service:
+    name: "{{ sys_iptables_persistent_service }}"
+    enabled: "{{ sys_firewall == 'iptables' }}"
+    state: "{{ (sys_firewall == 'iptables') | ternary('started', 'stopped') }}"
+  ignore_errors: "{{ sys_firewall != 'iptables' }}"
+
+
+- name: set has_iptables
+  set_fact:
+    has_iptables: "{{ sys_firewall == 'iptables' }}"

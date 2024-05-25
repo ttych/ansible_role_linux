@@ -16,7 +16,7 @@
 
     - include_tasks: hostid.yml
 
-    - include_tasks: release_upgrade_mode.yml
+    - include_tasks: update.yml
 
     - include_tasks: sysctls.yml
 
@@ -45,5 +45,7 @@
     - include_tasks: router.yml
 
     - include_tasks: firewall.yml
+
+    - include_tasks: tmp.yml
 
   when: ansible_system == 'Linux'

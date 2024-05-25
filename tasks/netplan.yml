@@ -8,32 +8,73 @@
     group: root
     mode: 0755
 
+
 - name: use static netplan configuration
   set_fact:
-    network_netplan_template_src: netplan/static_netplan.yml
-    network_netplan_template_dest: "{{ sys_netplan_d }}/01-netcfg.yaml"
+    sys_netplan_conf_template: netplan/static_netplan.yml
+    sys_netplan_conf_file: "{{ sys_netplan_d }}/01-netcfg.yaml"
   when: sys_network_mode == 'static'
 
 - name: use NetworkManager netplan configuration
   set_fact:
-    network_netplan_template_src: netplan/network_manager_netplan.yml
-    network_netplan_template_dest: "{{ sys_netplan_d }}/01-network-manager-all.yaml"
-  when: sys_network_mode == 'workstation'
+    sys_netplan_conf_template: netplan/network_manager_netplan.yml
+    sys_netplan_conf_file: "{{ sys_netplan_d }}/01-network-manager-all.yaml"
+  when: sys_network_mode == 'network_manager'
 
 - name: use dynamic netplan configuration
   set_fact:
-    network_netplan_template_src: netplan/dynamic_netplan.yml
-    network_netplan_template_dest: "{{ sys_netplan_d }}/01-netcfg.yaml"
+    sys_netplan_conf_template: netplan/dynamic_netplan.yml
+    sys_netplan_conf_file: "{{ sys_netplan_d }}/01-netcfg.yaml"
   when: sys_network_mode == 'dynamic'
 
+
+- name: netplan template content
+  set_fact:
+    t_sys_netplan_conf_content: "{{ lookup('template', sys_netplan_conf_template) | from_yaml }}"
+
+
+- name: netplan current status
+  stat:
+    path: "{{ sys_netplan_conf_file }}"
+  register: t_sys_netplan_conf_file_stat
+
+- block:
+
+    - name: netplan current raw content
+      slurp:
+        src: "{{ t_sys_netplan_conf_file_stat.stat.path }}"
+      register: t_sys_netplan_conf_current_raw
+
+    - name: netplan content from merge
+      set_fact:
+        t_sys_netplan_conf_content_new: "{{ t_sys_netplan_conf_current_raw['content'] | b64decode | from_yaml | combine(t_sys_netplan_conf_content, list_merge='append_rp', recursive='true') }}"
+      ignore_errors: yes
+
+  when: t_sys_netplan_conf_file_stat.stat.exists
+
+- name: netplan content from template
+  set_fact:
+    t_sys_netplan_conf_content_new: "{{ t_sys_netplan_conf_content }}"
+  when: t_sys_netplan_conf_content_new is not defined
+
+
 - name: install netplan
-  template:
-    src: "{{ network_netplan_template_src }}"
-    dest: "{{ network_netplan_template_dest }}"
+  copy:
+    dest: "{{ sys_netplan_conf_file }}"
+    content: "{{ t_sys_netplan_conf_content_new | to_nice_yaml(indent=4) }}"
     owner: root
     group: root
-    mode: 0600
-  register: netplan_install
+    mode: "0600"
+  register: t_sys_netplan_install
+
+- name: clean alt netplan if present
+  file:
+    path: "{{ item }}"
+    state: absent
+  when: item != sys_netplan_conf_file
+  loop:
+    - "{{ sys_netplan_d }}/01-netcfg.yaml"
+    - "{{ sys_netplan_d }}/01-network-manager-all.yaml"
 
 - block:
     - name: generate netplan
@@ -42,4 +83,4 @@
     - name: apply netplan
       shell: netplan apply
 
-  when: netplan_install.changed
+  when: t_sys_netplan_install.changed

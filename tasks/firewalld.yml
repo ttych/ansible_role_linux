@@ -1,0 +1,20 @@
+---
+
+- block:
+
+    - fail:
+        msg: "NOT IMPLEMENTED"
+
+  when: sys_firewall == "firewalld"
+
+- name: service firewalld
+  service:
+    name: "{{ sys_firewalld_service }}"
+    enabled: "{{ sys_firewall == 'firewalld' }}"
+    state: "{{ (sys_firewall == 'firewalld') | ternary('started', 'stopped') }}"
+  ignore_errors: "{{ sys_firewall != 'firewalld' }}"
+
+
+- name: set has_firewalld
+  set_fact:
+    has_firewalld: "{{ sys_firewall == 'firewalld' }}"

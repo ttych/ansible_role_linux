@@ -1,0 +1,43 @@
+---
+
+- block:
+
+    - name: nftables.d
+      file:
+        path: "{{ sys_nftables_d }}"
+        owner: root
+        group: root
+        mode: '0750'
+        state: directory
+
+    - name: nftables.conf
+      template:
+        src: nftables/nftables.conf
+        dest: "{{ sys_nftables_conf }}"
+        mode: "{{ sys_nftables_conf_mode }}"
+        owner: root
+        group: root
+      register: t_sys_nftables_conf
+
+  when: sys_firewall == "nftables"
+
+- name: service nftables
+  service:
+    name: "{{ sys_nftables_service }}"
+    enabled: "{{ sys_firewall == 'nftables' }}"
+    state: "{{ (sys_firewall == 'nftables') | ternary('started', 'stopped') }}"
+  ignore_errors: "{{ sys_firewall != 'nftables' }}"
+
+- name: reload nftables
+  service:
+    name: "{{ sys_nftables_service }}"
+    state: restarted
+  when:
+    - t_sys_nftables_conf is defined
+    - t_sys_nftables_conf.changed
+  ignore_errors: "{{ sys_firewall != 'nftables' }}"
+
+
+- name: set has_nftables
+  set_fact:
+    has_nftables: "{{ sys_firewall == 'nftables' }}"

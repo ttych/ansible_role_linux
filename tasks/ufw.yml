@@ -1,0 +1,20 @@
+---
+
+- block:
+
+    - fail:
+        msg: "NOT IMPLEMENTED"
+
+  when: sys_firewall == "ufw"
+
+- name: service ufw
+  service:
+    name: "{{ sys_ufw_service }}"
+    enabled: "{{ sys_firewall == 'ufw' }}"
+    state: "{{ (sys_firewall == 'ufw') | ternary('started', 'stopped') }}"
+  ignore_errors: "{{ sys_firewall != 'ufw' }}"
+
+
+- name: set has_ufw
+  set_fact:
+    has_ufw: "{{ sys_firewall == 'ufw' }}"
