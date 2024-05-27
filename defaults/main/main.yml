@@ -419,57 +419,6 @@ sys_network_wan_interface: null
 sys_network_lan_interface: null
 sys_network_wlan_interface: null
 
-sys_firewall: nftables
-
-sys_firewall_wan_services:
-  - protocol: tcp
-    port: 22
-    service: ssh
-sys_firewall_lan_services:
-  - protocol: tcp
-    port: 22
-    service: ssh
-  - protocol: tcp
-    port: 53
-    service: domain
-  - protocol: udp
-    port: 53
-    service: domain
-  - protocol: udp
-    port: 67
-    service: bootps
-  - protocol: udp
-    port: 68
-    service: bootpc
-  - protocol: udp
-    port: 69
-    service: tftp
-
-sys_iptables_service: iptables
-sys_iptables_persistent_service: netfilter-persistent
-sys_iptables_packages:
-  - iptables
-  - iptables-persistent
-sys_iptables_rules_routing:
-  - chain: FORWARD
-    action: append
-    jump: ACCEPT
-  - chain: FORWARD
-    action: append
-    cstate:
-      - RELATED
-      - ESTABLISHED
-    jump: ACCEPT
-sys_iptables_rules_nating:
-  - table: nat
-    chain: POSTROUTING
-    action: append
-    jump: MASQUERADE
-
-sys_firewalld_service: firewalld
-
-sys_ufw_service: ufw
-
 sys_tmp_tmpfs_size: 1G
 sys_tmp_mounts:
   - src: tmpfs
