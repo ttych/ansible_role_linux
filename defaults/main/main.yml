@@ -155,6 +155,7 @@ sys_packages:
       - libreoffice-l10n-fr
       - mplayer
       - mythes-fr
+      - network-manager
       - putty
       - rxvt-unicode
       # - steam
