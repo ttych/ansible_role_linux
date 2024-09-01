@@ -153,7 +153,7 @@ sys_packages:
       - libreoffice
       - libreoffice-help-fr
       - libreoffice-l10n-fr
-      - mplayer
+      - mpv
       - mythes-fr
       - network-manager
       - putty
