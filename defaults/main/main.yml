@@ -57,6 +57,7 @@ sys_packages:
       - gpart
       - htop
       - inotify-tools
+      - iw
       - knockd
       - ksh
       - lftp
@@ -415,10 +416,6 @@ sys_router_sysctl_ipv6:
   - name: net.ipv6.conf.all.forwarding
     value_on: 1
     value_off: 0
-
-sys_network_wan_interface: null
-sys_network_lan_interface: null
-sys_network_wlan_interface: null
 
 sys_tmp_tmpfs_size: 1G
 sys_tmp_mounts:

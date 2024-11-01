@@ -1,0 +1,66 @@
+---
+
+######################################### documentation
+# - https://doc.ubuntu-fr.org/hostapd
+
+
+### check device compatibility
+# iw list | grep -A 10 "Supported interface modes"
+
+- name: install network access point packages
+  package:
+    name: "{{ sys_hostapd_pkgs }}"
+    state: latest
+
+- name: deploy hostapd.conf
+  template:
+    src: hostapd/hostapd.conf
+    dest: "{{ sys_hostapd_conf }}"
+    mode: "{{ sys_hostapd_conf_mode | d('0644') }}"
+    owner: root
+    group: root
+  register: t_sys_hostapd_conf
+
+- name: stat hostapd.accept
+  stat:
+    path: "{{ sys_hostapd_accept_mac_file }}"
+  register: t_sys_hostapd_accept_mac_file
+
+- name: ensure hostapd.accept exists
+  file:
+    path: "{{ sys_hostapd_accept_mac_file }}"
+    state: touch
+  when: not t_sys_hostapd_accept_mac_file.stat.exists
+
+- name: stat hostapd.deny
+  stat:
+    path: "{{ sys_hostapd_deny_mac_file }}"
+  register: t_sys_hostapd_deny_mac_file
+
+- name: ensure hostapd.deny exists
+  file:
+    path: "{{ sys_hostapd_deny_mac_file }}"
+    state: touch
+  when: not t_sys_hostapd_deny_mac_file.stat.exists
+
+- block:
+    - name: enable hostapd service
+      systemd:
+        name: "{{ sys_hostapd_service }}"
+        enabled: yes
+        masked: no
+        daemon_reload: yes
+
+    - name: start service
+      systemd:
+        name: "{{ sys_hostapd_service }}"
+        state: started
+      register: t_sys_hostapd_service
+
+    - name: restart service
+      systemd:
+        name: "{{ sys_hostapd_service }}"
+        state: restarted
+      when: t_sys_hostapd_conf.changed and not t_sys_hostapd_service.changed
+
+  when: ansible_service_mgr == 'systemd'

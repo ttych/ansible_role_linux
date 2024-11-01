@@ -28,29 +28,32 @@
   when: sys_network_mode == 'dynamic'
 
 
-- name: netplan template content
+- name: netplan conf content
   set_fact:
     t_sys_netplan_conf_content: "{{ lookup('template', sys_netplan_conf_template) | from_yaml }}"
 
 
-- name: netplan current status
-  stat:
-    path: "{{ sys_netplan_conf_file }}"
-  register: t_sys_netplan_conf_file_stat
-
 - block:
+    - name: netplan current status
+      stat:
+        path: "{{ sys_netplan_conf_file }}"
+      register: t_sys_netplan_conf_file_stat
 
-    - name: netplan current raw content
-      slurp:
-        src: "{{ t_sys_netplan_conf_file_stat.stat.path }}"
-      register: t_sys_netplan_conf_current_raw
+    - block:
 
-    - name: netplan content from merge
-      set_fact:
-        t_sys_netplan_conf_content_new: "{{ t_sys_netplan_conf_current_raw['content'] | b64decode | from_yaml | combine(t_sys_netplan_conf_content, list_merge='append_rp', recursive='true') }}"
-      ignore_errors: yes
+        - name: netplan current raw content
+          slurp:
+            src: "{{ t_sys_netplan_conf_file_stat.stat.path }}"
+          register: t_sys_netplan_conf_current_raw
 
-  when: t_sys_netplan_conf_file_stat.stat.exists
+        - name: netplan content from merge
+          set_fact:
+            t_sys_netplan_conf_content_new: "{{ t_sys_netplan_conf_current_raw['content'] | b64decode | from_yaml | combine(t_sys_netplan_conf_content, list_merge='append_rp', recursive='true') }}"
+          ignore_errors: yes
+
+      when: t_sys_netplan_conf_file_stat.stat.exists
+
+  when: sys_network_merge
 
 - name: netplan content from template
   set_fact:

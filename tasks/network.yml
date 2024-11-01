@@ -17,12 +17,16 @@
         sys_network_mode: network_manager
       when: sys_network_mode is not defined and host_type == 'workstation'
 
-    - name: set sys_network_mode to network-manager
+    - name: set sys_network_mode to dynamic
       set_fact:
         sys_network_mode: dynamic
       when: sys_network_mode is not defined
 
 
-- name: set network configuration with netplan
+- name: configure network with netplan
   include_tasks: netplan.yml
   when: ansible_distribution == 'Ubuntu'
+
+
+- name: configure wifi
+  include_tasks: network_wifi.yml

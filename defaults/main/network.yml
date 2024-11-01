@@ -1,0 +1,32 @@
+---
+
+sys_network_wan_interface: null
+sys_network_lan_interface: null
+sys_network_wlan_interface: null
+
+sys_network_merge: yes
+
+sys_network_bridges: null
+
+sys_network_wifi_interface: null
+sys_network_wifi_bridge: null
+sys_network_wifi_pkgs:
+  - iw
+sys_network_wifi_ssid: null
+sys_network_wifi_passphrase: null
+sys_network_wifi_access_point_want: no
+
+######################################### hostapd
+sys_hostapd_pkgs:
+  - hostapd
+  - bridge-utils
+sys_hostapd_conf: /etc/hostapd/hostapd.conf
+sys_hostapd_service: hostapd
+# sys_hostapd_conf_hw_mode: a
+# sys_hostapd_conf_channel: 44
+sys_hostapd_conf_hw_mode: g
+sys_hostapd_conf_channel: 7
+sys_hostapd_conf_country_code: US
+sys_hostapd_conf_max_num_sta: 10
+sys_hostapd_accept_mac_file: /etc/hostapd/hostapd.accept
+sys_hostapd_deny_mac_file: /etc/hostapd/hostapd.deny

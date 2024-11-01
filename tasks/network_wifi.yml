@@ -1,0 +1,10 @@
+---
+
+- name: install wifi common
+  package:
+    name: "{{ sys_network_wifi_pkgs }}"
+    state: latest
+
+
+- include_tasks: hostapd.yml
+  when: sys_network_wifi_access_point_want
