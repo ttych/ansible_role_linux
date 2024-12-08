@@ -330,10 +330,10 @@ sys_zfs_dataset_properties:
 
 sys_sudoers_conf: /etc/sudoers
 sys_sudoers_d: /etc/sudoers.d
+sys_sudoers_sys_order: 10
 sys_sudoers:
-  - admin
-  - ops
-
+  - { name: admin, order: "{{ sys_sudoers_sys_order }}" }
+  - { name: ops, order: "{{ sys_sudoers_sys_order }}" }
 
 sys_journald_service: systemd-journald.service
 sys_journald_conf: /etc/systemd/journald.conf

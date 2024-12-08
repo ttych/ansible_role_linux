@@ -2,8 +2,8 @@
 
 - name: deploy sudoers
   template:
-    src: 'sudoers.d/{{ item }}'
-    dest: '{{ sys_sudoers_d }}/{{ item }}'
+    src: 'sudoers.d/{{ item.name }}'
+    dest: '{{ sys_sudoers_d }}/{{ item.order }}_{{ item.name }}'
     owner: root
     group: "{{ root_group }}"
     mode: 0440
