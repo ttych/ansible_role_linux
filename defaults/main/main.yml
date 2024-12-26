@@ -188,6 +188,10 @@ sys_packages:
       - llvm
     Ubuntu:
       - g++
+      - libfontconfig1-dev
+      - libgl1-mesa-dev
+      - libgmp-dev
+      - libsdl2-dev
 
 sys_domain_search:
   - local
