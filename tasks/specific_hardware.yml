@@ -6,4 +6,4 @@
   register: t_lscpi
   changed_when: no
 
-- include_tasks: broadcom_bcmw.yml
+- include_tasks: broadcom_bcm43.yml

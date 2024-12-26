@@ -1,0 +1,4 @@
+---
+
+linux_broadcom_bcm43_packages:
+  - bcmwl-kernel-source

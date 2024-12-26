@@ -3,7 +3,7 @@
 - block:
     - name: install broadcom bcm drivers
       package:
-        name: "{{ linux_broadcom_bcmw }}"
+        name: "{{ linux_broadcom_bcm43_packages }}"
         state: present
 
   when:

@@ -1,5 +1,7 @@
 ---
 
-linux_broadcom_bcmw: bcmwl-kernel-source
+
+linux_broadcom_bcm43_packages:
+  - broadcom-sta-dkms
 
 sys_sshd_service: ssh
