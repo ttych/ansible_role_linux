@@ -1,0 +1,12 @@
+---
+
+sys_sysctl_conf: /etc/sysctl.conf
+sys_sysctl_conf_d: /etc/sysctl.d
+
+sys_sysctls_base:
+  - name: vm.max_map_count
+    value: 1048576
+
+sys_sysctls_group: []
+
+sys_sysctls_host: []

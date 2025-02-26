@@ -200,11 +200,6 @@ sys_hostid_file: /etc/hostid
 sys_ubuntu_release_upgrades_conf: /etc/update-manager/release-upgrades
 sys_ubuntu_release_upgrades_mode: normal
 
-sys_sysctl_conf: /etc/sysctl.conf
-sys_sysctls_base:
-  - name: vm.max_map_count
-    value: 1048576
-sys_sysctls: []
 
 sys_groups_base:
   - { name: plugdev, gid: 46 }

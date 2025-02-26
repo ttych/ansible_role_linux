@@ -1,0 +1,37 @@
+---
+
+- name: set default _sysctl_conf
+  set_fact:
+    _sysctl_conf: "/etc/sysctl.conf"
+  when: _sysctl_conf is not defined or not _sysctl_conf
+
+- name: set default _sysctl_conf_d
+  set_fact:
+    _sysctl_conf: "/etc/sysctl.d"
+  when: _sysctl_conf_d is not defined or not _sysctl_conf_d
+
+
+- name: check sysctl.d availability
+  stat:
+    path: "{{ _sysctl_conf_d }}"
+  register: _t_sysctl_conf_d
+
+- name: set sysctl conf file
+  set_fact:
+    _sysctl_conf_current: "{{ _sysctl_conf_d }}/{{ _sysctl.get('order', '10') }}-{{ _sysctl.get('category', 'common') }}.conf"
+  when: _t_sysctl_conf_d.stat.exists
+
+- name: set sysctl conf file
+  set_fact:
+    _sysctl_conf_current: "{{ _sysctl_conf }}"
+  when: not _t_sysctl_conf_d.stat.exists
+
+
+- name: set sysctls
+  sysctl:
+    name: "{{ _sysctl.name }}"
+    value: "{{ _sysctl.value }}"
+    state: "{{ _sysctl.state | default('present') }}"
+    reload: "{{ _sysctl.reload | default(true) }}"
+    sysctl_set: "{{ _sysctl.set | default(true) }}"
+    sysctl_file: "{{ _sysctl_conf_current }}"

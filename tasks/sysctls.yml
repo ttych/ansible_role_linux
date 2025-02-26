@@ -1,17 +1,9 @@
 ---
 
-- name: compute sysctls
-  set_fact:
-    sys_sysctls_computed: "{{ (sys_sysctls_computed|d([])) + [item] }}"
-  loop: "{{ sys_sysctls + sys_sysctls_base }}"
-  when: item.name not in (sys_sysctls_computed|d([])) | map(attribute='name') | list
-
-
-- name: set sysctls
-  sysctl:
-    name: "{{ item.name }}"
-    value: "{{ item.value }}"
-    state: present
-    reload: yes
-    sysctl_file: "{{ sys_sysctl_conf }}"
-  loop: "{{ sys_sysctls_computed }}"
+- include_tasks: _sysctl.yml
+  loop: "{{ (sys_sysctls_base|d([])) + (sys_sysctls_group|d([])) + (sys_sysctls_host|d([])) }}"
+  loop_control:
+    loop_var: _sysctl
+  vars:
+    _sysctl_conf: "{{ sys_sysctl_conf }}"
+    _sysctl_conf_d: "{{ sys_sysctl_conf_d }}"
