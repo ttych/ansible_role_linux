@@ -1,10 +1,6 @@
 ---
 
-- group:
-    name: "{{ group.name }}"
-    state: "{{ group.state | default('present') }}"
-    gid: "{{ group.gid | default(omit) }}"
-    system: "{{ group.system | default('no') }}"
+- include_tasks: _group.yml
   loop: "{{ sys_groups_base + sys_groups }}"
   loop_control:
-    loop_var: group
+    loop_var: _group

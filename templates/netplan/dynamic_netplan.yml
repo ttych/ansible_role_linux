@@ -1,7 +1,7 @@
 ---
 network:
-  version: 2
-  renderer: networkd
+  version: {{ sys_network_netplan_version }}
+  renderer: {{ sys_network_netplan_dynamic_renderer }}
   ethernets:
 {% if want_sys_ipv4 and ansible_default_ipv4 and ansible_default_ipv4.interface %}
     {{ ansible_default_ipv4.interface }}:

@@ -6,7 +6,12 @@ sys_network_wlan_interface: null
 
 sys_network_merge: yes
 
-sys_network_bridges: null
+sys_network_netplan_version: 2
+sys_network_netplan_dynamic_renderer: networkd
+sys_network_netplan_network_manager_renderer: NetworkManager
+sys_network_netplan_static_renderer: networkd
+
+sys_network_interfaces: []
 
 sys_network_wifi_interface: null
 sys_network_wifi_bridge: null
@@ -15,6 +20,23 @@ sys_network_wifi_pkgs:
 sys_network_wifi_ssid: null
 sys_network_wifi_passphrase: null
 sys_network_wifi_access_point_want: no
+
+sys_domain_default_nameservers:
+  ipv4:
+    - 8.8.4.4         # google public
+    # - 8.8.8.8         # google public
+    - 208.67.222.222  # openDNS
+    # - 208.67.220.220  # openDNS
+    - 1.0.0.1         # cloudflare
+    # - 1.1.1.1         # cloudflare
+    - 9.9.9.9         # quad9
+  ipv6:
+    - 2001:4860:4860::8844  # google public
+    # - 2001:4860:4860::8888  # google public
+    - 2606:4700:4700::1001  # cloudflare
+    # - 2606:4700:4700::1111  # cloudflare
+    - 2620:fe::fe           # quad9
+
 
 ######################################### hostapd
 sys_hostapd_pkgs:

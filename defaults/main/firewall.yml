@@ -2,10 +2,10 @@
 
 sys_firewall: nftables
 
-sys_firewall_wan_services_base:
-  - protocol: tcp
-    port: 22
-    service: ssh
+sys_firewall_wan_services_base: []
+  # - protocol: tcp
+  #   port: 22
+  #   service: ssh
 sys_firewall_wan_services: []
 sys_firewall_lan_services_base:
   - protocol: tcp

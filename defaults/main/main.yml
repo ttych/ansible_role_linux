@@ -194,23 +194,6 @@ sys_packages:
       - libgmp-dev
       - libsdl2-dev
 
-sys_domain_search:
-  - local
-sys_domain_nameservers:
-  ipv4:
-    # - 8.8.8.8         # google public
-    - 8.8.4.4         # google public
-    - 208.67.222.222  # openDNS
-    # - 208.67.220.220  # openDNS
-    # - 1.1.1.1         # cloudflare
-    - 1.0.0.1         # cloudflare
-    - 9.9.9.9         # quad9
-  ipv6:
-    # - 2001:4860:4860::8888  # google public
-    - 2001:4860:4860::8844  # google public
-    # - 2606:4700:4700::1111  # cloudflare
-    - 2606:4700:4700::1001  # cloudflare
-    - 2620:fe::fe           # quad9
 
 sys_hostid_file: /etc/hostid
 
@@ -338,7 +321,7 @@ sys_sudoers_d: /etc/sudoers.d
 sys_sudoers_sys_order: 10
 sys_sudoers:
   - { name: admin, order: "{{ sys_sudoers_sys_order }}" }
-  - { name: ops, order: "{{ sys_sudoers_sys_order }}" }
+  - { name: ops, order: "{{ sys_sudoers_sys_order + 1 }}" }
 
 sys_journald_service: systemd-journald.service
 sys_journald_conf: /etc/systemd/journald.conf

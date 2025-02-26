@@ -1,139 +1,71 @@
 ---
 network:
-  version: 2
-  renderer: networkd
+  version: {{ sys_network_netplan_version }}
+  renderer: {{ sys_network_netplan_static_renderer }}
 
-{% set bridged_interfaces = [] %}
-{% for bridge, bridge_conf in sys_network_bridges.items() %}
-{%   set _ = bridged_interfaces.extend(bridge_conf['interfaces']) %}
-{% endfor %}
 
+{% set bridge_interfaces = sys_network_interfaces | selectattr('type', 'defined') | selectattr('type', 'equalto', 'bridge') | list %}
+{% set ethernet_interfaces = sys_network_interfaces | selectattr('type', 'defined') | selectattr('type', 'equalto', 'ethernet') | list %}
+
+{% if ethernet_interfaces %}
   ethernets:
-{%  for interface in (ansible_interfaces | sort) %}
-{%    set interface_facts = vars["ansible_" + interface] %}
-{%    if interface_facts.type == 'ether' and interface != 'lo' %}
-    {{ interface }}:
-      dhcp4: no
-      dhcp6: no
-{%      if interface_facts.active and interface not in bridged_interfaces %}
-      addresses:
-{%        if want_sys_ipv4 %}
-{%          if interface_facts.ipv4.__class__.__name__ == 'list' %}
-{%            set interface_ipv4s = interface_facts.ipv4 %}
-{%          elif interface_facts.ipv4.__class__.__name__ == 'dict' %}
-{%            set interface_ipv4s = [interface_facts.ipv4] %}
-{%          endif %}
-{%          for ipv4 in interface_ipv4s %}
-        - {{ ipv4.address }}/{{ ipv4.prefix }}
-{%          endfor %}
-{%        endif %}
-
-{%        if want_sys_ipv6 %}
-{%          if interface_facts.ipv6.__class__.__name__ == 'list' %}
-{%            set interface_ipv6s = interface_facts.ipv6 %}
-{%          elif interface_facts.ipv6.__class__.__name__ == 'dict' %}
-{%            set interface_ipv6s = [interface_facts.ipv6] %}
-{%          endif %}
-{%          for ipv6 in interface_ipv6s %}
-{%            if ipv6.scope != 'global' and ipv6.scope != 'link' %}
-        - {{ ipv6.address }}/{{ ipv6.prefix }}
-{%            endif %}
-{%          endfor %}
-{%        endif %}
-
-{%     if (want_sys_ipv4 and ansible_default_ipv4.gateway and ansible_default_ipv4.alias == interface) or (want_sys_ipv6 and ansible_default_ipv6.gateway and ansible_default_ipv6.alias == interface) %}
-      routes:
-{%       if want_sys_ipv4 and ansible_default_ipv4.gateway and ansible_default_ipv4.alias == interface %}
-        - to: default
-          via: {{ ansible_default_ipv4.gateway }}
-          on-link: true
+{%   for interface in ethernet_interfaces %}
+    {{ interface.dev }}:
+      dhcp4: {{ interface.dhcp4 | bool | lower }}
+      dhcp6: {{ interface.dhcp4 | bool | lower }}
+{%     if 'addresses' in interface and interface.addresses %}
+      addresses: {{ interface.addresses }}
+{%     endif %}
+{%     if interface.get('dns', true) %}
+      nameservers:
+{% set local_nameservers = interface.get('dns_nameservers', sys_domain_default_nameservers.ipv4 + sys_domain_default_nameservers.ipv6) %}
+{%       if local_nameservers %}
+          addresses: {{ local_nameservers }}
 {%       endif %}
-{%       if want_sys_ipv6 and ansible_default_ipv6.gateway and ansible_default_ipv6.alias == interface %}
-        - to: "::/0"
-          via: "{{ ansible_default_ipv6.gateway }}"
-          on-link: true
+{%       if interface.get('dns_search', false) %}
+          search: {{ interface.dns_search }}
 {%       endif %}
 {%     endif %}
-      nameservers:
-        addresses: {{ sys_domain_nameservers.ipv4 + sys_domain_nameservers.ipv6 }}
-        search: {{ sys_domain_search }}
-
-{%      endif %}
-{%    endif %}
-{%  endfor %}
-{% if sys_network_bridges %}
-  bridges:
-{%  for bridge, bridge_conf in sys_network_bridges.items() %}
-{%    set interface_facts = vars.get("ansible_" + "toto", {}) %}
-
-    {{ bridge }}:
-      dhcp4: no
-      dhcp6: no
-{%    set interfaces = (bridge_conf or interface_facts).get('interfaces', []) %}
-{%    if interfaces %}
-      interfaces:
-{%      for interface in interfaces %}
-        - {{ interface }}
-{%      endfor %}
-{%    endif %}
-
-      addresses:
-{%    if want_sys_ipv4 %}
-{%      set interface_ipv4s_item = [] %}
-{%      for interface in ([bridge] + interfaces) %}
-{%        if not interface_ipv4s_item %}
-{%          set local_interface_facts = vars.get("ansible_" + interface, {}) %}
-{%          if local_interface_facts and 'ipv4' in local_interface_facts %}
-{%            set _ = interface_ipv4s_item.append(local_interface_facts['ipv4']) %}
-{%          endif %}
-{%        endif %}
-{%      endfor %}
-{%      if interface_ipv4s_item[0].__class__.__name__ == 'list' %}
-{%        set interface_ipv4s = interface_ipv4s_item[0] %}
-{%      elif interface_ipv4s_item[0].__class__.__name__ == 'dict' %}
-{%        set interface_ipv4s = [interface_ipv4s_item[0]] %}
-{%      endif %}
-{%      for ipv4 in interface_ipv4s %}
-        - {{ ipv4.address }}/{{ ipv4.prefix }}
-{%      endfor %}
-{%    endif %}
-
-{%    if want_sys_ipv6 %}
-{%      set interface_ipv6s_item = [] %}
-{%      for interface in ([bridge] + interfaces) %}
-{%        if not interface_ipv6s_item %}
-{%          set local_interface_facts = vars.get("ansible_" + interface, {}) %}
-{%          if local_interface_facts and 'ipv6' in local_interface_facts %}
-{%            set _ = interface_ipv6s_item.append(local_interface_facts['ipv6']) %}
-{%          endif %}
-{%        endif %}
-{%      endfor %}
-{%      if interface_ipv6s_item[0].__class__.__name__ == 'list' %}
-{%        set interface_ipv6s = interface_ipv6s_item[0] %}
-{%      elif interface_ipv6s_item[0].__class__.__name__ == 'dict' %}
-{%        set interface_ipv6s = [interface_ipv6s_item[0]] %}
-{%      endif %}
-{%      for ipv6 in interface_ipv6s %}
-        - {{ ipv6.address }}/{{ ipv6.prefix }}
-{%      endfor %}
-{%    endif %}
-
-{%    if (want_sys_ipv4 and ansible_default_ipv4.gateway and ansible_default_ipv4.alias == bridge) or (want_sys_ipv6 and ansible_default_ipv6.gateway and ansible_default_ipv6.alias == bridge) %}
+{%     if interface.get('routes', false) %}
       routes:
-{%      if want_sys_ipv4 and ansible_default_ipv4.gateway and ansible_default_ipv4.alias == bridge %}
-        - to: default
-          via: "{{ ansible_default_ipv4.gateway }}"
-          on-link: true
-{%      endif %}
-{%      if want_sys_ipv6 and ansible_default_ipv6.gateway and ansible_default_ipv6.alias == bridge %}
-        - to: "::/0"
-          via: "{{ ansible_default_ipv6.gateway }}"
-          on-link: true
-{%      endif %}
-{%    endif %}
-      nameservers:
-        addresses: {{ sys_domain_nameservers.ipv4 + sys_domain_nameservers.ipv6 }}
-        search: {{ sys_domain_search }}
+{%       for route in interface.routes %}
+        - on-link: {{ route.on_link | default(true) }}
+          to: {{ route.to }}
+          via: {{ route.via }}
+{%       endfor %}
+{%     endif %}
+{%   endfor %}
+{% endif %}
 
-{%  endfor %}
+{% if bridge_interfaces %}
+  bridges:
+{%   for interface in bridge_interfaces %}
+    {{ interface.dev }}:
+      dhcp4: {{ interface.dhcp4 | bool | lower }}
+      dhcp6: {{ interface.dhcp4 | bool | lower }}
+{%     if 'interfaces' in interface and interface.interfaces %}
+      interfaces: {{ interface.interfaces }}
+{%     endif %}
+{%     if 'addresses' in interface and interface.addresses %}
+      addresses: {{ interface.addresses }}
+{%     endif %}
+{%     if interface.get('dns', true) %}
+      nameservers:
+{% set local_nameservers = interface.get('dns_nameservers', sys_domain_default_nameservers.ipv4 + sys_domain_default_nameservers.ipv6) %}
+{%       if local_nameservers %}
+          addresses: {{ local_nameservers }}
+{%       endif %}
+{%       if interface.get('dns_search', false) %}
+          search: {{ interface.dns_search }}
+{%       endif %}
+{%     endif %}
+{%     if interface.get('routes', false) %}
+      routes:
+{%       for route in interface.routes %}
+        - on-link: {{ route.on_link | default(true) }}
+          to: {{ route.to }}
+          via: {{ route.via }}
+{%       endfor %}
+{%     endif %}
+{%   endfor %}
 {% endif %}
