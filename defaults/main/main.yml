@@ -192,6 +192,7 @@ sys_packages:
       - libfontconfig1-dev
       - libgl1-mesa-dev
       - libgmp-dev
+      - libpq-dev
       - libsdl2-dev
 
 
