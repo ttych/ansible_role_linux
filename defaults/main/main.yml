@@ -47,6 +47,7 @@ sys_packages:
       - bash
       - curl
       - daemontools
+      - direnv
       - dmidecode
       - ethtool
       - expect
@@ -72,6 +73,7 @@ sys_packages:
       - nfs-common
       - nfs-kernel-server
       - nmap
+      - ondir
       - openssh-server
       - p7zip
       - powertop
