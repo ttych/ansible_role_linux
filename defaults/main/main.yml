@@ -87,6 +87,7 @@ sys_packages:
       - sshpass
       - strace
       - sudo
+      - sysstat
       - tmux
       - unrar
       - unzip
