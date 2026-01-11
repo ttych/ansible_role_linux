@@ -42,4 +42,4 @@
         state: restarted
       when: t_sys_journald_conf_change.changed
 
-  when: ansible_service_mgr == 'systemd'
+  when: ansible_facts.service_mgr == 'systemd'

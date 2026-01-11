@@ -1,0 +1,174 @@
+---
+
+sys_packages_cache_ttl: 43200
+
+sys_packages:
+  common:
+    base:
+      - ansible
+      - apg
+      - arping
+      - aspell
+      - aspell-en
+      - aspell-fr
+      - autofs
+      - bash
+      - btop
+      - curl
+      - daemontools
+      - direnv
+      - dmidecode
+      - ethtool
+      - expect
+      - fastfetch
+      - ffmpeg
+      - gddrescue
+      - gdisk
+      - git
+      - gnupg
+      - gpart
+      - htop
+      - inotify-tools
+      - iw
+      - knockd
+      - ksh
+      - lftp
+      - libtcmalloc-minimal4
+      - lm-sensors
+      - logrotate
+      - make
+      - makepasswd
+      - mercurial
+      - ncal
+      - neovim
+      - net-tools
+      - nfs-common
+      - nfs-kernel-server
+      - nmap
+      - ondir
+      - openssh-server
+      - p7zip
+      - powertop
+      - python3
+      - rake
+      - rar
+      - rsync
+      - ruby
+      - samba
+      - smartmontools
+      - sshfs
+      - sshpass
+      - strace
+      - sudo
+      - sysstat
+      - tmux
+      - unrar
+      - unzip
+      - vim
+      - wget
+      - whois
+      - wtmpdb
+      - x86info
+      - zfsnap
+      - zfsutils-linux
+      - zip
+      - zsh
+    Ubuntu:
+      - apparmor
+      - apt
+      - aptitude
+      - apt-file
+      - snapd
+      - software-properties-common
+      - ubuntu-minimal
+      - ubuntu-standard
+      - update-notifier-common
+  extra:
+    base:
+      - abcde
+      - dvdbackup
+      - eyed3
+      - faac
+      - flac
+      - iat
+      - iperf
+      - iperf3
+      - lame
+      - latex2html
+      - opus-tools
+      - streamripper
+      - tightvncserver
+    Ubuntu: []
+  server:
+    base:
+      - dhcpdump
+      - dhcping
+      - emacs-nox
+      - iptables
+      - nftables
+      - screen
+      - vim-nox
+    Ubuntu:
+      - needrestart
+      # - ubuntu-server-minimal
+      # - ubuntu-server
+  workstation:
+    base:
+      - chromium-browser
+      - chromium-browser-l10n
+      - emacs
+      - filezilla
+      - firefox
+      - firefox-locale-fr
+      - gcompris-qt
+      - gimp
+      - gimp-help-fr
+      - gparted
+      - gthumb
+      - handbrake
+      - handbrake-cli
+      - hunspell-fr
+      - hyphen-fr
+      - libreoffice
+      - libreoffice-help-fr
+      - libreoffice-l10n-fr
+      - mpv
+      - mythes-fr
+      - network-manager
+      - putty
+      - rxvt-unicode
+      # - steam
+      # - steamcmd
+      - vim
+      - virtualbox
+      - vlc
+      - wine
+      # - wine32
+      - winetricks
+      - xbindkeys
+      # - xbindkeys-config
+      - xclip
+      - xsel
+      - xterm
+    Ubuntu: []
+  developer:
+    base:
+      - autoconf
+      - clang
+      - cmake
+      - gcc
+      - gh
+      - libclang-cpp-dev
+      - libreadline-dev
+      - libsqlite3-dev
+      - libssl-dev
+      - libusb-dev
+      - libyaml-dev
+      - llvm
+    Ubuntu:
+      - g++
+      - libfontconfig1-dev
+      - libgl1-mesa-dev
+      - libgmp-dev
+      - libpq-dev
+      - libsdl2-dev

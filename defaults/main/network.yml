@@ -44,11 +44,23 @@ sys_hostapd_pkgs:
   - bridge-utils
 sys_hostapd_conf: /etc/hostapd/hostapd.conf
 sys_hostapd_service: hostapd
+sys_hostapd_conf_driver: nl80211
 # sys_hostapd_conf_hw_mode: a
 # sys_hostapd_conf_channel: 44
 sys_hostapd_conf_hw_mode: g
-sys_hostapd_conf_channel: 7
+sys_hostapd_conf_channel: 6
 sys_hostapd_conf_country_code: US
-sys_hostapd_conf_max_num_sta: 10
+sys_hostapd_conf_max_num_sta: 16
+sys_hostapd_conf_ieee80211d: 1
+sys_hostapd_conf_ieee80211n: 1
+sys_hostapd_conf_ieee80211ax: 1
+sys_hostapd_conf_ht_capab: "[HT40+][SHORT-GI-20][SHORT-GI-40][DSSS_CCK-40][MAX-AMSDU-7935]"
+sys_hostapd_conf_he_oper_chwidth: 0
+sys_hostapd_conf_he_su_beamformer: 1
+sys_hostapd_conf_he_su_beamformee: 1
+sys_hostapd_conf_he_mu_beamformer: 1
+sys_hostapd_conf_he_twt_responder: 1
+sys_hostapd_conf_he_oper_centr_freq_seg0_idx: 0
+sys_hostapd_conf_he_bss_color: 1
 sys_hostapd_accept_mac_file: /etc/hostapd/hostapd.accept
 sys_hostapd_deny_mac_file: /etc/hostapd/hostapd.deny

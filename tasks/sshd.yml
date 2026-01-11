@@ -26,7 +26,7 @@
   service:
     name: "{{ sys_sshd_service }}"
     enabled: yes
-  when: ansible_system == 'Linux'
+  when: ansible_facts.system == 'Linux'
 
 - name: start service
   service:

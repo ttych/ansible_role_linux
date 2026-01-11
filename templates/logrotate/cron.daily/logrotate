@@ -1,6 +1,6 @@
 #!/bin/sh
 
-{% if ansible_system == 'Linux' %}
+{% if ansible_facts.system == 'Linux' %}
 # skip in favour of systemd timer
 if [ -d /run/systemd/system ]; then
     exit 0

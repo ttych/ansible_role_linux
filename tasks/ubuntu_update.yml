@@ -8,4 +8,4 @@
         regexp: "^Prompt="
         line: "Prompt={{ sys_ubuntu_release_upgrades_mode }}"
 
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_facts.distribution == "Ubuntu"

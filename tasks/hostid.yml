@@ -12,14 +12,14 @@
         - sethostid
 
     # check hostid file is present
-    - name: check that {{ hostid_file }} exists
+    - name: check that {{ sys_hostid_file }} exists
       stat:
         path: '{{ sys_hostid_file }}'
-      register: hostid_file_stat
+      register: t_sys_hostid_file
 
     # create hostid file if missing
-    - name: create {{ hostid_file }}
+    - name: create {{ sys_hostid_file }}
       shell: /usr/local/bin/sethostid
-      when: hostid_file_stat.stat.exists == False
+      when: t_sys_hostid_file.stat.exists == False
 
-  when: ansible_system == 'Linux'
+  when: ansible_facts.system == 'Linux'

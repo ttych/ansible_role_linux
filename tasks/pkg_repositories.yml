@@ -1,4 +1,4 @@
 ---
 
 - include_tasks: pkg_repositories_Ubuntu.yml
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_facts.distribution == 'Ubuntu'

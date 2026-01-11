@@ -25,7 +25,7 @@
 
 - name: configure network with netplan
   include_tasks: netplan.yml
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_facts.distribution == 'Ubuntu'
 
 
 - name: configure wifi

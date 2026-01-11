@@ -7,7 +7,7 @@
     _sysctl_conf_d: "{{ sys_sysctl_conf_d }}"
     _sysctl:
       name: "{{ item.name }}"
-      value: "{{ ((is_router | d(false)) and ansible_default_ipv4) | ternary(item.value_on, item.value_off) }}"
+      value: "{{ ((is_router | d(false)) and ansible_facts.default_ipv4) | ternary(item.value_on, item.value_off) }}"
       order: 20
       category: routing
 
@@ -19,6 +19,6 @@
     _sysctl_conf_d: "{{ sys_sysctl_conf_d }}"
     _sysctl:
       name: "{{ item.name }}"
-      value: "{{ ((is_router | d(false)) and ansible_default_ipv6) | ternary(item.value_on, item.value_off) }}"
+      value: "{{ ((is_router | d(false)) and ansible_facts.default_ipv6) | ternary(item.value_on, item.value_off) }}"
       order: 20
       category: routing

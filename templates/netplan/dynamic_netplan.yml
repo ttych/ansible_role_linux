@@ -3,11 +3,11 @@ network:
   version: {{ sys_network_netplan_version }}
   renderer: {{ sys_network_netplan_dynamic_renderer }}
   ethernets:
-{% if want_sys_ipv4 and ansible_default_ipv4 and ansible_default_ipv4.interface %}
-    {{ ansible_default_ipv4.interface }}:
+{% if want_sys_ipv4 and ansible_facts.default_ipv4 and ansible_facts.default_ipv4.interface %}
+    {{ ansible_facts.facts.default_ipv4.interface }}:
       dhcp4: true
 {% endif %}
-{% if want_sys_ipv6 and ansible_default_ipv6 and ansible_default_ipv6.interface %}
-    {{ ansible_default_ipv6.interface }}:
+{% if want_sys_ipv6 and ansible_facts.default_ipv6 and ansible_facts.default_ipv6.interface %}
+    {{ ansible_facts.default_ipv6.interface }}:
       dhcp4: true
 {% endif %}

@@ -25,13 +25,13 @@
       set_fact:
         user_home_name: "{{ user_home | basename }}"
 
-    - name: "get associated dataset for {{ user_home_base }}"
-      shell: zfs list -H "{{ user_home_base }}" | awk '$5 = "{{ user_home_base }}" {print $1}'
+    - name: get associated dataset for user home parent dataset
+      shell: zfs list -H "{{ user_home_base }}" | awk '$5 == "{{ user_home_base }}" {print $1}'
       register: user_home_base_dataset
       changed_when: no
 
     - block:
-        - name: "create dataset for {{ user_home }}"
+        - name: "create dataset for user home"
           zfs:
             name: "{{ user_home_base_dataset.stdout }}/{{ user_home_name }}"
             state: present
@@ -86,7 +86,7 @@
   loop: "{{ _user.authorized_keys | default([]) }}"
   loop_control:
     loop_var: key
-  when: key
+  when: (key | default(false)) != ''
 
 
 - name: deploy shell environments
@@ -96,7 +96,7 @@
     owner: "{{ _user.name }}"
     group: "{{ _user.group }}"
     mode: "0600"
-  failed_when: no
+  ignore_errors: yes
   when: _user.home is defined
   loop:
     - .profile
@@ -104,3 +104,5 @@
     - .bash_profile
     - .zprofile
     - .zshrc
+  loop_control:
+    label: "{{ item }}"

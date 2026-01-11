@@ -10,10 +10,14 @@
 - name: set ntpd servers
   lineinfile:
     path: "{{ sys_ntpd_conf_file }}"
-    regexp: "^pool {{ item.pool }} "
-    line: "pool {{ item.pool }} {{ item.options }}"
-  loop: "{{ sys_ntpd_servers }}"
+    regexp: "^{{ item.key }} "
+    line: "{ item.key }} {{ item.value }}"
+    state: "{{ item.state | d('present') }}"
+    backrefs: "{{ item.backrefs | d(false) }}"
+  loop: "{{ sys_ntpd_conf_entries }}"
   register: t_sys_ntpd_conf
+
+# FIXME: manage sys_ntpd_servers
 
 # - name: set keys file content
 #   # FIXME

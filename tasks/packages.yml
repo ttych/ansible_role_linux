@@ -4,13 +4,13 @@
   set_fact:
     sys_computed_packages: "{{ \
       (sys_packages['common']['base'] | d([])) \
-      + (sys_packages['common'][ansible_distribution] | d([])) \
-      + (sys_packages['common'][ansible_distribution + '_' + ansible_distribution_version] | d([])) \
-      + (sys_packages['common'][ansible_distribution + '_' + ansible_architecture] | d([])) \
+      + (sys_packages['common'][ansible_facts.distribution] | d([])) \
+      + (sys_packages['common'][ansible_facts.distribution + '_' + ansible_facts.distribution_version] | d([])) \
+      + (sys_packages['common'][ansible_facts.distribution + '_' + ansible_facts.architecture] | d([])) \
       + (sys_packages[host_type]['base'] | d([])) \
-      + (sys_packages[host_type][ansible_distribution] | d([])) \
-      + (sys_packages[host_type][ansible_distribution + '_' + ansible_distribution_version] | d([])) \
-      + (sys_packages[host_type][ansible_distribution + '_' + ansible_architecture] | d([])) \
+      + (sys_packages[host_type][ansible_facts.distribution] | d([])) \
+      + (sys_packages[host_type][ansible_facts.distribution + '_' + ansible_facts.distribution_version] | d([])) \
+      + (sys_packages[host_type][ansible_facts.distribution + '_' + ansible_facts.architecture] | d([])) \
     }}"
 
 - name: add extra pack to package list
@@ -18,9 +18,9 @@
     sys_computed_packages: "{{ \
       sys_computed_packages  \
       + (sys_packages['extra']['base'] | d([])) \
-      + (sys_packages['extra'][ansible_distribution] | d([])) \
-      + (sys_packages['extra'][ansible_distribution + '_' + ansible_distribution_version] | d([])) \
-      + (sys_packages['extra'][ansible_distribution + '_' + ansible_architecture] | d([])) \
+      + (sys_packages['extra'][ansible_facts.distribution] | d([])) \
+      + (sys_packages['extra'][ansible_facts.distribution + '_' + ansible_facts.distribution_version] | d([])) \
+      + (sys_packages['extra'][ansible_facts.distribution + '_' + ansible_facts.architecture] | d([])) \
     }}"
   when: want_sys_extra
 
@@ -29,9 +29,9 @@
     sys_computed_packages: "{{ \
       sys_computed_packages  \
       + (sys_packages['developer']['base'] | d([])) \
-      + (sys_packages['developer'][ansible_distribution] | d([])) \
-      + (sys_packages['developer'][ansible_distribution + '_' + ansible_distribution_version] | d([])) \
-      + (sys_packages['developer'][ansible_distribution + '_' + ansible_architecture] | d([])) \
+      + (sys_packages['developer'][ansible_facts.distribution] | d([])) \
+      + (sys_packages['developer'][ansible_facts.distribution + '_' + ansible_facts.distribution_version] | d([])) \
+      + (sys_packages['developer'][ansible_facts.distribution + '_' + ansible_facts.architecture] | d([])) \
     }}"
   when: want_sys_developer
 
@@ -51,4 +51,4 @@
         cache_valid_time: "{{ sys_packages_cache_ttl }}"
         autoremove: yes
 
-  when: ansible_pkg_mgr == 'apt'
+  when: ansible_facts.pkg_mgr == 'apt'

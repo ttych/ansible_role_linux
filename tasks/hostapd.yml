@@ -64,4 +64,4 @@
         state: restarted
       when: t_sys_hostapd_conf.changed and not t_sys_hostapd_service.changed
 
-  when: ansible_service_mgr == 'systemd'
+  when: ansible_facts.service_mgr == 'systemd'

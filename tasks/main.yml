@@ -48,4 +48,4 @@
 
     - include_tasks: tmp.yml
 
-  when: ansible_system == 'Linux'
+  when: ansible_facts.system == 'Linux'
