@@ -114,6 +114,7 @@ sys_packages:
       # - ubuntu-server
   workstation:
     base:
+      - brightnessctl
       - chromium-browser
       - chromium-browser-l10n
       - emacs
