@@ -7,5 +7,5 @@
     owner: root
     group: "{{ root_group }}"
     mode: 0440
-    validate: 'sh -c "cat {{ sys_sudoers_conf }} %s | visudo -cf-"'
+    validate: 'visudo -cf "%s"'
   loop: "{{ sys_sudoers }}"

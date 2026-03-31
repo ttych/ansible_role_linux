@@ -1,6 +1,8 @@
 ---
 
 - include_tasks: _user.yml
+  vars:
+    _user_zfs_properties: "{{ sys_zfs_dataset_properties }}"
   loop: "{{ sys_users_base + sys_users }}"
   loop_control:
     loop_var: _user
