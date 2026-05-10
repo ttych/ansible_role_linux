@@ -48,7 +48,7 @@
 
         - name: netplan content from merge
           set_fact:
-            t_sys_netplan_conf_content_new: "{{ t_sys_netplan_conf_current_raw['content'] | b64decode | from_yaml | combine(t_sys_netplan_conf_content, list_merge='append_rp', recursive='true') }}"
+            t_sys_netplan_conf_content_new: "{{ t_sys_netplan_conf_current_raw['content'] | b64decode | from_yaml | combine(t_sys_netplan_conf_content, list_merge='prepend_rp', recursive='true') }}"
           ignore_errors: yes
 
       when: t_sys_netplan_conf_file_stat.stat.exists
