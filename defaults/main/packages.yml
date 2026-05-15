@@ -79,6 +79,7 @@ sys_packages:
       - apt
       - aptitude
       - apt-file
+      - fwupd
       - snapd
       - software-properties-common
       - ubuntu-minimal
